@@ -3,6 +3,9 @@
 #include <stdio.h>
 #include <morseAlpha.h>
 
+#define BuzzPin 1
+
+
 
 const int TIME_UNIT = 250;
 
@@ -15,13 +18,15 @@ const int WORD_SPACE = 7 * TIME_UNIT - LETTER_SPACE;
 const char* message = "ahoj\0";
 
 int main(void){
-    pinMode(13, OUTPUT);
+   // pinMode(13, OUTPUT);
     int size = strlen(message);
+    printf("%d", size);
 
   //loop through the message
   for (int i = 0; i < size; i++)
   {
-     const char* ch = strchr(characters, tolower(message[i]));  
+     const char* ch = strchr(characters, tolower(message[i]));
+     printf("%s", ch);
   }
 
 
