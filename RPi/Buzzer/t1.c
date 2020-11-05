@@ -46,7 +46,7 @@ int main(void)
 {
 int i, j;
 
-if(wiringPiSetup() == -1){ When wiringpi initialization failed printf "WiringPi Failed" 
+if(wiringPiSetup() == -1){ //When wiringpi initialization failed printf "WiringPi Failed" 
 printf("14CORE | WiringPi initialization failed !");
 return 1;
 }
