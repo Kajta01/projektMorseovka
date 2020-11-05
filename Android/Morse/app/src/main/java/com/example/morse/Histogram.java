@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.RectF;
@@ -25,6 +26,7 @@ import android.util.Size;
 import android.util.SparseIntArray;
 import android.view.Surface;
 import android.view.TextureView;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -36,6 +38,7 @@ import java.util.Arrays;
 public class Histogram extends Activity {
 
     TextureView myTexture;
+    ImageView greyImage;
 
     private String cameraId;
     CameraDevice cameraDevice;
@@ -47,9 +50,10 @@ public class Histogram extends Activity {
     Handler mBackgroundHandler;
     HandlerThread mByckgroundTheard;
 
+    static Bitmap imgToPrint;
 
-
-
+    static Bitmap imgToProcess;
+    static Matrix imgMatrix;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +62,8 @@ public class Histogram extends Activity {
 
         myTexture = (TextureView)findViewById(R.id.cameraView);
         myTexture.setSurfaceTextureListener(textureListener);
+
+        greyImage = (ImageView)findViewById(R.id.grayView);
 
         }
 
@@ -141,6 +147,13 @@ public class Histogram extends Activity {
                 try {
                     imageSize(myTexture.getWidth(), myTexture.getHeight());
                     openCamera();
+                    imgToProcess = myTexture.getBitmap();
+                    imgMatrix = myTexture.getTransform( null );
+                    imgToPrint = Bitmap.createBitmap(imgToProcess, 0, 0,
+                            imgToProcess.getWidth(), imgToProcess.getHeight(),
+                            imgMatrix, true);
+                    greyImage.setImageBitmap(imgToProcess);//imgToPrint);
+
                 } catch (CameraAccessException e) {
                     e.printStackTrace();
                 }
@@ -168,17 +181,14 @@ public class Histogram extends Activity {
         }
         Matrix matrix = new Matrix();
         RectF textureRectF = new RectF(0,0,width,height);
-        RectF previewRectF = new RectF(0, 0, myTexture.getHeight(), myTexture.getWidth());
+        RectF previewRectF = new RectF(0, 0,myTexture.getHeight(), myTexture.getWidth());
         float centerX = textureRectF.centerX();
         float centerY = textureRectF.centerY();
 
 
-            previewRectF.offset(centerX - previewRectF.centerX(),
-                    centerY - previewRectF.centerY());
-            matrix.setRectToRect(textureRectF, previewRectF, Matrix.ScaleToFit.FILL);
-            float scale = Math.max((float) width / myTexture.getWidth(),
-                    (float) height / myTexture.getHeight());
-            matrix.postScale(scale, scale, centerX, centerY);
+         previewRectF.offset(centerX - previewRectF.centerX(),centerY - previewRectF.centerY());
+         matrix.setRectToRect(textureRectF, previewRectF, Matrix.ScaleToFit.FILL);
+         matrix.postScale(1,1, centerX, centerY); //(float) width / myTexture.getHeight() ,(float) height / myTexture.getWidth(),
 
 
 
