@@ -1,3 +1,9 @@
+#include <wiringPi.h>
+#include <softTone.h>
+#include <stdio.h>
+#include <morseAlpha.h>
+
+
 const int TIME_UNIT = 250;
 
 const int DOT = TIME_UNIT;
