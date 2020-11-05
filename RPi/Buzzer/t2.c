@@ -5,6 +5,10 @@
 
 #define BuzzPin 1
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 127f6c6aba036700986d10724a5cf32f2b21980b
 
 const int TIME_UNIT = 250;
 
@@ -17,13 +21,15 @@ const int WORD_SPACE = 7 * TIME_UNIT - LETTER_SPACE;
 const char* message = "ahoj\0";
 
 int main(void){
-    pinMode(13, OUTPUT);
+   // pinMode(13, OUTPUT);
     int size = strlen(message);
+    printf("%d", size);
 
   //loop through the message
   for (int i = 0; i < size; i++)
   {
-     const char* ch = strchr(characters, tolower(message[i]));  
+     const char* ch = strchr(characters, tolower(message[i]));
+     printf("%s", ch);
   }
 
 
