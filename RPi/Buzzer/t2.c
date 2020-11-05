@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <morseAlpha.h>
 
+#define BuzzPin 1
+
 
 const int TIME_UNIT = 250;
 
