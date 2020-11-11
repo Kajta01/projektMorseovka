@@ -13,10 +13,8 @@ const int SYMBOL_SPACE = TIME_UNIT;
 const int LETTER_SPACE = 3 * TIME_UNIT - SYMBOL_SPACE;
 const int WORD_SPACE = 7 * TIME_UNIT - LETTER_SPACE;
 
-
-
 int main(void) {
-	char* message = "abeceda";
+
 	if (wiringPiSetup() == -1) {
 		printf("WiringPi initialization failed !");
 		return 1;
@@ -26,39 +24,43 @@ int main(void) {
 		return 1;
 	}
 
-	while (1) {
+	while (1)
+	{
+		printMorse("slusi ti to");
 
-		//loop through the message
-		for (int i = 0; i < strlen(message); i++) {
-			printf("\nChar: %c", message[i]);
-			fflush(stdout);
-			const char *ch = strchr(characters, tolower(message[i]));
 
-			if (ch != NULL) {
-				int index = (int) (ch - characters);
-				const char *morseSymbols = mappings[index];
-				int count = strlen(morseSymbols);
-
-				for (int i = 0; i < count; i++) {
-					softToneWrite(BuzzPin, 500);
-
-					int symbolTime;
-					char symbol = morseSymbols[i];
-					if (symbol == '.')
-						symbolTime = DOT;
-					else
-						symbolTime = DASH;
-
-					delay(symbolTime);
-					softToneWrite(BuzzPin, 0);
-					delay(SYMBOL_SPACE);
-				}
-				delay(LETTER_SPACE);
-			}
-			delay(WORD_SPACE);
-
-		}
 	}
 	return 0;
+}
+void printMorse(char* message) {
+	//loop through the message
+	for (int i = 0; i < strlen(message); i++) {
+		printf("\nChar: %c", message[i]);
+		fflush(stdout);
+		const char *ch = strchr(characters, tolower(message[i]));
+
+		if (ch != NULL) {
+			int index = (int) (ch - characters);
+			const char *morseSymbols = mappings[index];
+			int count = strlen(morseSymbols);
+
+			for (int i = 0; i < count; i++) {
+				softToneWrite(BuzzPin, 500);
+
+				int symbolTime;
+				char symbol = morseSymbols[i];
+				if (symbol == '.')
+					symbolTime = DOT;
+				else
+					symbolTime = DASH;
+
+				delay(symbolTime);
+				softToneWrite(BuzzPin, 0);
+				delay(SYMBOL_SPACE);
+			}
+			delay(LETTER_SPACE);
+		}
+		delay(WORD_SPACE);
+	}
 }
 
