@@ -1,7 +1,7 @@
-//https://www.eclipse.org/forums/index.php/t/263075/
+//
 
-//https://www.codeproject.com/Articles/1250929/Sending-Morse-Code-with-your-Arduino
-const char* characters = "abcdefghijklmnopqrstuvwxyz0123456789";
+
+const char* characters = "abcdefghijklmnopqrstuvwxyz0123456789 ";
 
 const char* mappings[] = {
     ".-\0",     //a
@@ -40,4 +40,5 @@ const char* mappings[] = {
     "--...\0",  //7
     "---..\0",  //8
     "----.\0",  //9
+	"\0",		//" "
 };
