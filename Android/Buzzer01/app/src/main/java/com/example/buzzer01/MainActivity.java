@@ -20,29 +20,35 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
-import com.github.mikephil.charting.data.LineData;
 
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+    static double SOUND_LIMIT = 0.01;
 
     boolean run = false;
-    private int frequency = 22000;
+
+    private int frequency = 10000;
     private AudioRecord audioRecord;
     private RecordAudioTask recordTask;
     private float[] buffer;
     private int sampleCount = 128*8; //512
     private final int REQUEST_PERMISSION = 200;
 
+    StringBuilder morseValue = new StringBuilder();
+    StringBuilder AllRereceiveData = new StringBuilder();
+
     private Button startStopButton;
+    private Button clearButton;
     private ImageView graphView;
+    private TextView morseView;
+    private TextView morseValueView;
+    private TextView morseSymbol;
 
     private Paint paintSnd;
     private Canvas canvasSnd;
@@ -53,9 +59,7 @@ public class MainActivity extends AppCompatActivity {
 
     private int seekBarValue = 0;
 
-    protected int colorWhite = R.color.whiteShadow;
-    protected int colorBlack = R.color.colorPrimary;
-    protected int darkRed = R.color.darkRed;
+
 
 
     @Override
@@ -70,6 +74,9 @@ public class MainActivity extends AppCompatActivity {
         countToRefresh = metrics.widthPixels;
 
         graphView = this.findViewById(R.id.graphView);
+        morseSymbol = this.findViewById(R.id.morseSymbol);
+        morseView = this.findViewById(R.id.morseView);
+        morseValueView = this.findViewById(R.id.morseValueView);
         startStopButton = this.findViewById(R.id.StartButton);
         startStopButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -79,6 +86,10 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     if(getPermission()) {
                         startRecording(); } } }});
+        clearButton = this.findViewById(R.id.ClearButton);
+        clearButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) { ClearData();}});
 
         this.setUpSndInTime();
 
@@ -121,6 +132,15 @@ public class MainActivity extends AppCompatActivity {
             recordTask.cancel(true);
         }
     }
+    private void ClearData(){
+        morseValue.delete(0,morseValue.length());
+        AllRereceiveData.delete(0,  AllRereceiveData.length());
+        morseValueView.setText("");
+        morseView.setText("");
+
+        setUpSndInTime();
+        counterToRefresh = 0;
+    }
     private boolean getPermission() {
         try {
             // Permission
@@ -159,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
         paintSnd.setColor(Color.RED);
         graphView.setImageBitmap(bitmapSnd);
     }
-    private class RecordAudioTask extends AsyncTask<Void, LineDataSet, Void> {
+    private class RecordAudioTask extends AsyncTask<Void, Void, Void> {
         private int maxIndex;
         private int onPushCounter;
         @Override
@@ -173,27 +193,38 @@ public class MainActivity extends AppCompatActivity {
 
                 //System.out.println("\n result:"+ bufferReadResult + "\n");
                 // Reset hodnot
-                micMax = 0;
+                 micMax = 0;
 
-                List<Entry> mChartInputPoints = new ArrayList<>();
 
                 // Úprava vstupním hodnot na rozsah -1 až 1
+                double value = 0;
+                int valueMorse = 0;
                 for (int i = 0; i < sampleCount && i < bufferReadResult; i++) {
 
-                    double value = buffer[i];
+                    value = buffer[i];
 
-                    if (micMax < value) micMax = value;
-                    mChartInputPoints.add(new Entry(i, (float) (value)));
+                    if (micMax < value) {
+                        micMax = value;
+                    }
+
+                }
+                morseView.setText(String.valueOf(micMax));
+
+                if(micMax > SOUND_LIMIT)  {valueMorse = 1;}
+                morseValue.append(valueMorse);
+                AllRereceiveData.append(valueMorse);
+
+                if((morseValue.length() >  1) && valueMorse == 0)
+                {
+                    Morse.SolveSymbol(morseValue.toString(),morseValue.length() );
+
+                    morseValue.delete(0,morseValue.length());
+                    AllRereceiveData.append(",");
                 }
 
-                // Seskupení dat pro Charts
-                LineDataSet setComp1 = new LineDataSet(mChartInputPoints, "");
 
 
-                // Odeslání -> onProgressUpdate
-                publishProgress(setComp1 /*setComp2, setComp3*/);
-                //Thread.sleep(5);
-
+                onProgressUpdate();
 
             }
             // END OF WHILE
@@ -204,16 +235,18 @@ public class MainActivity extends AppCompatActivity {
         }
             return null;
         }
-        @Override
-        protected void onProgressUpdate(LineDataSet... LineDataSets) {
+
+        protected void onProgressUpdate() {
             try {
                 int value = maxIndex;
 
                 // Zavolání funkcí
                 this.drawSndInTime();
-                this.renderChart(LineDataSets[0], LineDataSets[1] /*, LineDataSets[2] */);
+
 
                 // Tisk textu
+                morseValueView.setText(AllRereceiveData.toString());
+                morseSymbol.setText(Morse.getMorseChar());
 
 
                 if(onPushCounter == 0)
@@ -229,7 +262,7 @@ public class MainActivity extends AppCompatActivity {
             {
                 System.out.println("\n refresh!\n");
                 counterToRefresh = 0;
-                 canvasSnd.drawColor(getColor(darkRed));
+                 canvasSnd.drawColor(getColor(R.color.darkRed));
             }
 
             float Maximum = (float)((micMax)*imageViewHeight)+1;
@@ -237,15 +270,6 @@ public class MainActivity extends AppCompatActivity {
             graphView.invalidate();
             counterToRefresh++;
         }
-        private void renderChart(LineDataSet dataSet, LineDataSet dataSet2 /*, LineDataSet dataSet3 */) {
 
-            ArrayList<ILineDataSet> dataSets = new ArrayList<>();
-            dataSets.add(dataSet2);
-            //dataSets.add(dataSet3);
-            LineData lineData = new LineData(dataSet);
-            LineData lineData2 = new LineData(dataSets);
-
-
-        }
     }
 }

@@ -3,4 +3,5 @@
     <string name="graphView">graphView</string>
     <string name="StartButton">StartButton</string>
     <string name="ClearButton">ClearButton</string>
+    <string name="morseView">morseView</string>
 </resources>

@@ -35,10 +35,40 @@
         <ImageView
             android:id="@+id/graphView"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="100dp"
             android:background="@color/colorPrimary"
             android:contentDescription="@string/graphView"
             app:srcCompat="?attr/colorPrimary" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="11dp" />
+
+        <TextView
+            android:id="@+id/morseView"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:text=""
+            android:background="@color/colorPrimary"/>
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="11dp" />
+        <TextView
+            android:id="@+id/morseValueView"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:text=""
+            android:background="@color/colorPrimary"/>
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="11dp" />
+        <TextView
+            android:id="@+id/morseSymbol"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:text=""
+            android:background="@color/colorPrimary"/>
+
 
 
     </LinearLayout>
