@@ -23,13 +23,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
-
-import java.util.ArrayList;
-import java.util.List;
-
-public class MainActivity extends AppCompatActivity {
-    static double SOUND_LIMIT = 0.01;
+public class DecodeMorse extends AppCompatActivity {
+    static float SOUND_LIMIT = 0.015f;
+    static int BOOST = 10;
 
     boolean run = false;
 
@@ -49,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView morseView;
     private TextView morseValueView;
     private TextView morseSymbol;
+    private TextView morseText;
 
     private Paint paintSnd;
     private Canvas canvasSnd;
@@ -65,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_decode);
 
         buffer = new float[sampleCount];
 
@@ -75,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
 
         graphView = this.findViewById(R.id.graphView);
         morseSymbol = this.findViewById(R.id.morseSymbol);
+        morseText = this.findViewById(R.id.morseText);
         morseView = this.findViewById(R.id.morseView);
         morseValueView = this.findViewById(R.id.morseValueView);
         startStopButton = this.findViewById(R.id.StartButton);
@@ -90,6 +88,8 @@ public class MainActivity extends AppCompatActivity {
         clearButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) { ClearData();}});
+
+        Morse.initMorse();
 
         this.setUpSndInTime();
 
@@ -138,6 +138,12 @@ public class MainActivity extends AppCompatActivity {
         morseValueView.setText("");
         morseView.setText("");
 
+        Morse.clearMorseChar();
+        morseSymbol.setText("");
+
+        Morse.clearSolving();
+        morseText.setText("");
+
         setUpSndInTime();
         counterToRefresh = 0;
     }
@@ -176,8 +182,11 @@ public class MainActivity extends AppCompatActivity {
         Bitmap bitmapSnd = Bitmap.createBitmap(countToRefresh, imageViewHeight, Bitmap.Config.ARGB_8888);
         canvasSnd = new Canvas(bitmapSnd);
         paintSnd = new Paint();
-        paintSnd.setColor(Color.RED);
+        paintSnd.setColor(Color.BLACK);
         graphView.setImageBitmap(bitmapSnd);
+
+        canvasSnd.drawLine(0, imageViewHeight-(imageViewHeight*SOUND_LIMIT*BOOST)-1, countToRefresh, imageViewHeight-(imageViewHeight*SOUND_LIMIT*BOOST)-1, paintSnd);
+        paintSnd.setColor(Color.RED);
     }
     private class RecordAudioTask extends AsyncTask<Void, Void, Void> {
         private int maxIndex;
@@ -208,6 +217,8 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                 }
+                if(micMax > 0.5) micMax = 0.5;
+                if (micMax < 0.001) micMax = 0;
                 morseView.setText(String.valueOf(micMax));
 
                 if(micMax > SOUND_LIMIT)  {valueMorse = 1;}
@@ -247,6 +258,7 @@ public class MainActivity extends AppCompatActivity {
                 // Tisk textu
                 morseValueView.setText(AllRereceiveData.toString());
                 morseSymbol.setText(Morse.getMorseChar());
+                morseText.setText(Morse.getSolving());
 
 
                 if(onPushCounter == 0)
@@ -262,13 +274,16 @@ public class MainActivity extends AppCompatActivity {
             {
                 System.out.println("\n refresh!\n");
                 counterToRefresh = 0;
-                 canvasSnd.drawColor(getColor(R.color.darkRed));
+                 canvasSnd.drawColor(getColor(R.color.colorPrimary));
             }
 
-            float Maximum = (float)((micMax)*imageViewHeight)+1;
-            canvasSnd.drawLine(counterToRefresh, imageViewHeight/2f+Maximum, counterToRefresh, imageViewHeight/2f-Maximum, paintSnd);
+            float Maximum = (float)((((micMax)*imageViewHeight))*BOOST)+1;
+
+            canvasSnd.drawLine(counterToRefresh, imageViewHeight, counterToRefresh, imageViewHeight-Maximum, paintSnd);
+            canvasSnd.drawLine(counterToRefresh+1, imageViewHeight, counterToRefresh+1, imageViewHeight-Maximum, paintSnd);
+
             graphView.invalidate();
-            counterToRefresh++;
+            counterToRefresh=counterToRefresh+2;
         }
 
     }

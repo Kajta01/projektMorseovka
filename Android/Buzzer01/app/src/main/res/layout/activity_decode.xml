@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".DecodeMorse">
 
 
     <LinearLayout
@@ -64,6 +64,15 @@
             android:layout_height="11dp" />
         <TextView
             android:id="@+id/morseSymbol"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:text=""
+            android:background="@color/colorPrimary"/>
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="11dp" />
+        <TextView
+            android:id="@+id/morseText"
             android:layout_width="match_parent"
             android:layout_height="100dp"
             android:text=""
