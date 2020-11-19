@@ -14,6 +14,7 @@ import android.widget.Button;
 
 public class Welcome extends AppCompatActivity {
     private Button buttonDecodeBuzzer;
+    private Button buttonSocket;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,9 +25,16 @@ public class Welcome extends AppCompatActivity {
         buttonDecodeBuzzer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-              //  Intent intent = new Intent(this, DecodeMorse.class);
-               // startActivity(intent);
-
+                Intent intent = new Intent(Welcome.this, Decode.class);
+                startActivityForResult(intent,1);
+            }
+        });
+        buttonSocket = this.findViewById(R.id.buttonSocket);
+        buttonSocket.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Welcome.this, Socket.class);
+                startActivityForResult(intent,1);
             }
         });
 

@@ -6,4 +6,15 @@
     <string name="morseView">morseView</string>
     <string name="title_activity_welcome">Welcome</string>
 
+    <string name="ip_address">IP adresa zařízení:</string>
+    <string name="ip_zero">192.168.0.109</string>
+    <string name="local_port">Lokální port:</string>
+    <string name="remote_port">Vzdálený port:</string>
+    <string name="remote_ip">Adresa serveru:</string>
+    <string name="default_remote_port">5000</string>
+    <string name="start">Start</string>
+    <string name="stop">Stop</string>
+    <string name="send">Odeslat</string>
+
+
 </resources>

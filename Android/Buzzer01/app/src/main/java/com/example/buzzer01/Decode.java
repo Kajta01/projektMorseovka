@@ -23,7 +23,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class DecodeMorse extends AppCompatActivity {
+public class Decode extends AppCompatActivity {
     static float SOUND_LIMIT = 0.015f;
     static int BOOST = 10;
 
@@ -31,7 +31,7 @@ public class DecodeMorse extends AppCompatActivity {
 
     private int frequency = 10000;
     private AudioRecord audioRecord;
-    private RecordAudioTask recordTask;
+    private Decode.RecordAudioTask recordTask;
     private float[] buffer;
     private int sampleCount = 128*8; //512
     private final int REQUEST_PERMISSION = 200;
@@ -55,7 +55,6 @@ public class DecodeMorse extends AppCompatActivity {
     private double micMax=0;
 
     private int seekBarValue = 0;
-
 
 
 
@@ -118,8 +117,8 @@ public class DecodeMorse extends AppCompatActivity {
         this.setUpMicrophone();
         run = true;
         startStopButton.setText("Stop");
-       startStopButton.setBackgroundColor(getColor(R.color.darkGreen));
-        recordTask = new RecordAudioTask();
+        startStopButton.setBackgroundColor(getColor(R.color.darkGreen));
+        recordTask = new Decode.RecordAudioTask();
         recordTask.execute();
 
     }
@@ -128,8 +127,8 @@ public class DecodeMorse extends AppCompatActivity {
         startStopButton.setText("Start");
         startStopButton.setBackgroundColor(getColor(R.color.darkRed));
         if(audioRecord != null) {
+            //  recordTask.cancel(true);
             audioRecord.stop();
-            recordTask.cancel(true);
         }
     }
     private void ClearData(){
@@ -194,56 +193,56 @@ public class DecodeMorse extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... voids) {
             try{
-            audioRecord.startRecording();
-            onPushCounter = 5 + seekBarValue;
-            while (run) {
-                // Získání vzorků
-                int bufferReadResult = audioRecord.read(buffer, 0, sampleCount, AudioRecord.READ_BLOCKING);
+                audioRecord.startRecording();
+                onPushCounter = 5 + seekBarValue;
+                while (run) {
+                    // Získání vzorků
+                    int bufferReadResult = audioRecord.read(buffer, 0, sampleCount, AudioRecord.READ_BLOCKING);
 
-                //System.out.println("\n result:"+ bufferReadResult + "\n");
-                // Reset hodnot
-                 micMax = 0;
+                    //System.out.println("\n result:"+ bufferReadResult + "\n");
+                    // Reset hodnot
+                    micMax = 0;
 
 
-                // Úprava vstupním hodnot na rozsah -1 až 1
-                double value = 0;
-                int valueMorse = 0;
-                for (int i = 0; i < sampleCount && i < bufferReadResult; i++) {
+                    // Úprava vstupním hodnot na rozsah -1 až 1
+                    double value = 0;
+                    int valueMorse = 0;
+                    for (int i = 0; i < sampleCount && i < bufferReadResult; i++) {
 
-                    value = buffer[i];
+                        value = buffer[i];
 
-                    if (micMax < value) {
-                        micMax = value;
+                        if (micMax < value) {
+                            micMax = value;
+                        }
+
+                    }
+                    if(micMax > 0.5) micMax = 0.5;
+                    if (micMax < 0.001) micMax = 0;
+                    morseView.setText(String.valueOf(micMax));
+
+                    if(micMax > SOUND_LIMIT)  {valueMorse = 1;}
+                    morseValue.append(valueMorse);
+                    AllRereceiveData.append(valueMorse);
+
+                    if((morseValue.length() >  1) && valueMorse == 0)
+                    {
+                        Morse.SolveSymbol(morseValue.toString(),morseValue.length() );
+
+                        morseValue.delete(0,morseValue.length());
+                        AllRereceiveData.append(",");
                     }
 
+
+
+                    onProgressUpdate();
+
                 }
-                if(micMax > 0.5) micMax = 0.5;
-                if (micMax < 0.001) micMax = 0;
-                morseView.setText(String.valueOf(micMax));
-
-                if(micMax > SOUND_LIMIT)  {valueMorse = 1;}
-                morseValue.append(valueMorse);
-                AllRereceiveData.append(valueMorse);
-
-                if((morseValue.length() >  1) && valueMorse == 0)
-                {
-                    Morse.SolveSymbol(morseValue.toString(),morseValue.length() );
-
-                    morseValue.delete(0,morseValue.length());
-                    AllRereceiveData.append(",");
-                }
-
-
-
-                onProgressUpdate();
-
+                // END OF WHILE
+                if(audioRecord != null) audioRecord.stop();
+            } catch (Throwable t) {
+                t.printStackTrace();
+                Log.e("AudioRecord", "Recording Failed");
             }
-            // END OF WHILE
-            if(audioRecord != null) audioRecord.stop();
-        } catch (Throwable t) {
-            t.printStackTrace();
-            Log.e("AudioRecord", "Recording Failed");
-        }
             return null;
         }
 
@@ -274,7 +273,7 @@ public class DecodeMorse extends AppCompatActivity {
             {
                 System.out.println("\n refresh!\n");
                 counterToRefresh = 0;
-                 canvasSnd.drawColor(getColor(R.color.colorPrimary));
+                canvasSnd.drawColor(getColor(R.color.colorPrimary));
             }
 
             float Maximum = (float)((((micMax)*imageViewHeight))*BOOST)+1;
@@ -287,4 +286,5 @@ public class DecodeMorse extends AppCompatActivity {
         }
 
     }
+
 }
