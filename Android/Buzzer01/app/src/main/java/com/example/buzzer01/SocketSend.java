@@ -4,16 +4,23 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
 
-public class Socket extends AppCompatActivity {
+public class SocketSend extends AppCompatActivity {
 
     private final String REMOTE_PORT_KEY = "remote_port_key";
     private final String REMOTE_IP_KEY = "remote_ip_key";
@@ -23,7 +30,8 @@ public class Socket extends AppCompatActivity {
     private EditText editRemotePort;
     private EditText editMessage;
 
-    private MyDatagramSender myDatagramSender = null;
+    private UDPClient client;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +45,7 @@ public class Socket extends AppCompatActivity {
         buttonSend = this.findViewById(R.id.buttonSend);
         buttonSend.setOnClickListener(btnSendClick);
     }
+
     View.OnClickListener btnSendClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -69,15 +78,19 @@ public class Socket extends AppCompatActivity {
     }
 
     private void sendMessage(String remoteAddress, int remotePort, String message) {
-        MyDatagramSender sender = new MyDatagramSender();
-        sender.setRemoteAddress(remoteAddress);
-        sender.setRemotePort(remotePort);
-        sender.setMessage(message);
-        sender.start();
+
+        client = new UDPClient();
+        client.setRemoteAddress(remoteAddress);
+        client.setRemotePort(remotePort);
+        client.setMessage(message);
+
+        client.execute();
+
 
     }
 
-    private class MyDatagramSender extends Thread{
+    public class UDPClient extends AsyncTask<Void, Void, Void>
+    {
         String remoteAddress;
         String message;
         int remotePort;
@@ -94,21 +107,25 @@ public class Socket extends AppCompatActivity {
             this.remoteAddress = remoteAddress;
         }
 
+        Socket socket;
         @Override
-        public void run() {
+        protected Void doInBackground(Void... strings) {
             try {
-                DatagramSocket client_socket = new DatagramSocket(remotePort);
-                InetAddress IPAddress = InetAddress.getByName(remoteAddress);
-                byte[] send_data = message.getBytes();
+                socket = new Socket(remoteAddress,remotePort);
 
-                DatagramPacket send_packet = new DatagramPacket(send_data, send_data.length, IPAddress, remotePort);
-                //client_socket.setBroadcast(true);
-                client_socket.send(send_packet);
-                client_socket.close();
+                DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
+                String messageStr = message;
+                byte[] message = messageStr.getBytes();
+                outputStream.write(message);
+                outputStream.flush();
+                outputStream.close();
 
-            } catch (Exception e) {
+
+                socket.close();
+            } catch (IOException e) {
                 e.printStackTrace();
             }
+            return null;
         }
     }
 }

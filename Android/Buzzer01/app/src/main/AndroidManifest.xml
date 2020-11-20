@@ -14,7 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".Decode"></activity>
-        <activity android:name=".Socket" >
+        <activity android:name=".SocketSend" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

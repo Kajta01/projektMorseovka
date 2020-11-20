@@ -33,7 +33,7 @@ public class Welcome extends AppCompatActivity {
         buttonSocket.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Welcome.this, Socket.class);
+                Intent intent = new Intent(Welcome.this, SocketSend.class);
                 startActivityForResult(intent,1);
             }
         });
