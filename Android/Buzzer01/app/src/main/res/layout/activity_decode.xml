@@ -4,6 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:padding="-20dip"
+    android:paddingTop="-20dip"
+    android:paddingBottom="-20dip"
     tools:context=".Decode">
 
 
@@ -15,7 +19,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            >
 
             <Button
                 android:id="@+id/StartButton"
@@ -30,54 +35,101 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Clear" />
+
+            <CheckBox
+                android:id="@+id/checkMore"
+                android:layout_width="35dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:checked="true"
+                android:text="More" />
+
+
         </LinearLayout>
 
         <ImageView
             android:id="@+id/graphView"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="69dp"
             android:background="@color/colorPrimary"
             android:contentDescription="@string/graphView"
-            app:srcCompat="?attr/colorPrimary" />
+            android:padding="0dip"
+            android:paddingStart="0dip"
+            android:paddingLeft="0dip"
+            android:paddingTop="0dip"
+            android:paddingEnd="0dip"
+            android:paddingRight="0dip"
+            app:srcCompat="?attr/colorPrimary"
+            />
 
         <Space
             android:layout_width="match_parent"
             android:layout_height="11dp" />
 
-        <TextView
-            android:id="@+id/morseView"
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:text=""
-            android:background="@color/colorPrimary"/>
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="11dp" />
-        <TextView
-            android:id="@+id/morseValueView"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:text=""
-            android:background="@color/colorPrimary"/>
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="11dp" />
-        <TextView
-            android:id="@+id/morseSymbol"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:text=""
-            android:background="@color/colorPrimary"/>
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="11dp" />
         <TextView
             android:id="@+id/morseText"
             android:layout_width="match_parent"
             android:layout_height="100dp"
-            android:text=""
-            android:background="@color/colorPrimary"/>
+            android:background="@color/colorPrimary"
+            android:text="Vyluštěno"
+            style="@style/StylePadding"/>
 
+        <LinearLayout
+            android:id="@+id/moreLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="11dp" />
+
+            <TextView
+                android:id="@+id/measureValue"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorPrimary"
+                android:text="Naměřená hodnota"
+                style="@style/StylePadding"/>
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="11dp" />
+
+            <TextView
+                android:id="@+id/morseValueView"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:background="@color/colorPrimary"
+                android:text="0/1"
+                style="@style/StylePadding"/>
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="11dp" />
+
+            <TextView
+                android:id="@+id/morseSymbol"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:background="@color/colorPrimary"
+                android:text="Morseovka"
+                style="@style/StylePadding"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                style="@style/StylePadding">
+
+                <NumberPicker
+                    android:id="@+id/numberPickeLimit"
+                    android:layout_width="38dp"
+                    android:layout_height="wrap_content" />
+
+
+            </LinearLayout>
+
+        </LinearLayout>
 
 
     </LinearLayout>

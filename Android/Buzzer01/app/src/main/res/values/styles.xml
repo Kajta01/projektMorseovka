@@ -16,4 +16,14 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="TextStyle" parent="@android:style/TextAppearance">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">#aacbb4</item>
+    </style>
+
+    <style name="StylePadding">
+        <item name="android:paddingLeft">5dip</item>
+        <item name="android:paddingRight">5dip</item>
+    </style>
+
 </resources>

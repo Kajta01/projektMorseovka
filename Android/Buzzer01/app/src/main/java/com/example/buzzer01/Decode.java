@@ -1,6 +1,7 @@
 package com.example.buzzer01;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
@@ -14,22 +15,32 @@ import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.text.Layout;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.NumberPicker;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import java.lang.Math;
+
+import com.google.android.material.chip.Chip;
 
 public class Decode extends AppCompatActivity {
-    static float SOUND_LIMIT = 0.015f;
+    static float SOUND_LIMIT = 0.02f;
     static int BOOST = 10;
 
     boolean run = false;
 
-    private int frequency = 10000;
+    private int frequency = 12000;
     private AudioRecord audioRecord;
     private Decode.RecordAudioTask recordTask;
     private float[] buffer;
@@ -42,15 +53,18 @@ public class Decode extends AppCompatActivity {
     private Button startStopButton;
     private Button clearButton;
     private ImageView graphView;
-    private TextView morseView;
+    private TextView measureValue;
     private TextView morseValueView;
     private TextView morseSymbol;
     private TextView morseText;
+    private NumberPicker numberPickeLimit;
+    private CheckBox checkMore;
+    private LinearLayout moreLayout;
 
     private Paint paintSnd;
     private Canvas canvasSnd;
     private int countToRefresh=1000;
-    private int imageViewHeight=250;
+    private int imageViewHeight = 200;
     private int counterToRefresh=0;
     private double micMax=0;
 
@@ -72,10 +86,11 @@ public class Decode extends AppCompatActivity {
         graphView = this.findViewById(R.id.graphView);
         morseSymbol = this.findViewById(R.id.morseSymbol);
         morseText = this.findViewById(R.id.morseText);
-        morseView = this.findViewById(R.id.morseView);
+        measureValue = this.findViewById(R.id.measureValue);
         morseValueView = this.findViewById(R.id.morseValueView);
         startStopButton = this.findViewById(R.id.StartButton);
         startStopButton.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void onClick(View v) {
                 if (run) {
@@ -87,13 +102,30 @@ public class Decode extends AppCompatActivity {
         clearButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) { ClearData();}});
+        numberPickeLimit = this.findViewById(R.id.numberPickeLimit);
+        numberPickeLimit.setOnValueChangedListener(new NumberLimitListener());
+        checkMore = findViewById(R.id.checkMore);
+        checkMore.setOnCheckedChangeListener(new moreCheckedListener());
+        moreLayout = this.findViewById(R.id.moreLayout);
+
 
         Morse.initMorse();
+        ClearData();
 
         this.setUpSndInTime();
+        this.setNumberPicker();
 
         if(this.getPermission()) this.setUpMicrophone();
     }
+
+    private void setNumberPicker() {
+        numberPickeLimit.setMaxValue(10);
+        numberPickeLimit.setMinValue(0);
+        numberPickeLimit.setWrapSelectorWheel(false);
+        numberPickeLimit.setValue((int)(SOUND_LIMIT*100));
+
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -104,6 +136,7 @@ public class Decode extends AppCompatActivity {
         super.onPause();
         cancelRecording();
     }
+
     private void setUpMicrophone() {
         // Nastavení mikrofonu
         int channelConfiguration = AudioFormat.CHANNEL_IN_MONO;
@@ -113,6 +146,7 @@ public class Decode extends AppCompatActivity {
         audioRecord = new AudioRecord( MediaRecorder.AudioSource.MIC, frequency,
                 channelConfiguration, audioEncoding, bufferSize);
     }
+    @RequiresApi(api = Build.VERSION_CODES.M)
     private void startRecording(){
         this.setUpMicrophone();
         run = true;
@@ -122,6 +156,7 @@ public class Decode extends AppCompatActivity {
         recordTask.execute();
 
     }
+    @RequiresApi(api = Build.VERSION_CODES.M)
     private void cancelRecording(){
         run = false;
         startStopButton.setText("Start");
@@ -135,7 +170,7 @@ public class Decode extends AppCompatActivity {
         morseValue.delete(0,morseValue.length());
         AllRereceiveData.delete(0,  AllRereceiveData.length());
         morseValueView.setText("");
-        morseView.setText("");
+        measureValue.setText("");
 
         Morse.clearMorseChar();
         morseSymbol.setText("");
@@ -178,13 +213,17 @@ public class Decode extends AppCompatActivity {
 
     private void setUpSndInTime() {
         // Nastavení vykreslování audia v závislosti na čase (imageView)
-        Bitmap bitmapSnd = Bitmap.createBitmap(countToRefresh, imageViewHeight, Bitmap.Config.ARGB_8888);
+        Bitmap bitmapSnd = Bitmap.createBitmap(countToRefresh , imageViewHeight, Bitmap.Config.ARGB_8888);
         canvasSnd = new Canvas(bitmapSnd);
         paintSnd = new Paint();
         paintSnd.setColor(Color.BLACK);
         graphView.setImageBitmap(bitmapSnd);
 
+      // canvasSnd.drawLine(-20, imageViewHeight-(imageViewHeight*SOUND_LIMIT*BOOST)-10, countToRefresh, imageViewHeight-(imageViewHeight*SOUND_LIMIT*BOOST)-10, paintSnd);
+
+
         canvasSnd.drawLine(0, imageViewHeight-(imageViewHeight*SOUND_LIMIT*BOOST)-1, countToRefresh, imageViewHeight-(imageViewHeight*SOUND_LIMIT*BOOST)-1, paintSnd);
+
         paintSnd.setColor(Color.RED);
     }
     private class RecordAudioTask extends AsyncTask<Void, Void, Void> {
@@ -218,7 +257,7 @@ public class Decode extends AppCompatActivity {
                     }
                     if(micMax > 0.5) micMax = 0.5;
                     if (micMax < 0.001) micMax = 0;
-                    morseView.setText(String.valueOf(micMax));
+                    measureValue.setText(String.valueOf(micMax));
 
                     if(micMax > SOUND_LIMIT)  {valueMorse = 1;}
                     morseValue.append(valueMorse);
@@ -278,8 +317,8 @@ public class Decode extends AppCompatActivity {
 
             float Maximum = (float)((((micMax)*imageViewHeight))*BOOST)+1;
 
-            canvasSnd.drawLine(counterToRefresh, imageViewHeight, counterToRefresh, imageViewHeight-Maximum, paintSnd);
-            canvasSnd.drawLine(counterToRefresh+1, imageViewHeight, counterToRefresh+1, imageViewHeight-Maximum, paintSnd);
+            canvasSnd.drawLine(counterToRefresh, imageViewHeight-1, counterToRefresh, imageViewHeight-Maximum, paintSnd);
+            canvasSnd.drawLine(counterToRefresh+1, imageViewHeight-1, counterToRefresh+1, imageViewHeight-Maximum, paintSnd);
 
             graphView.invalidate();
             counterToRefresh=counterToRefresh+2;
@@ -287,4 +326,37 @@ public class Decode extends AppCompatActivity {
 
     }
 
+
+    private class NumberLimitListener implements NumberPicker.OnValueChangeListener {
+        @Override
+        public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+            SOUND_LIMIT = (float) (newVal/100.0);
+            canvasSnd.drawLine(0, imageViewHeight-(imageViewHeight*SOUND_LIMIT*BOOST)-1, countToRefresh, imageViewHeight-(imageViewHeight*SOUND_LIMIT*BOOST)-1, paintSnd);
+            ClearData();
+
+        }
+    }
+
+
+    private class moreCheckedListener implements CompoundButton.OnCheckedChangeListener {
+
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            if(isChecked){
+                moreLayout.setVisibility(View.VISIBLE);
+                LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) moreLayout.getLayoutParams();
+                params.height = LinearLayout.LayoutParams.MATCH_PARENT;
+                moreLayout.setLayoutParams(params);
+
+
+            } else {
+                LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) moreLayout.getLayoutParams();
+                moreLayout.setVisibility(View.INVISIBLE);
+
+                params.height = 0;
+                moreLayout.setLayoutParams(params);
+
+            }
+        }
+    }
 }
