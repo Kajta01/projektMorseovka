@@ -8,7 +8,8 @@
     android:padding="-20dip"
     android:paddingTop="-20dip"
     android:paddingBottom="-20dip"
-    tools:context=".Decode">
+    tools:context=".Decode"
+    android:background="@color/backgroundColor">
 
 
     <LinearLayout
@@ -51,26 +52,24 @@
             android:id="@+id/graphView"
             android:layout_width="match_parent"
             android:layout_height="69dp"
-            android:background="@color/colorPrimary"
+            android:background="@color/colorPrimaryI"
             android:contentDescription="@string/graphView"
             android:padding="0dip"
             android:paddingStart="0dip"
             android:paddingLeft="0dip"
             android:paddingTop="0dip"
             android:paddingEnd="0dip"
-            android:paddingRight="0dip"
-            app:srcCompat="?attr/colorPrimary"
-            />
+            android:paddingRight="0dip" />
 
         <Space
             android:layout_width="match_parent"
-            android:layout_height="11dp" />
+            android:layout_height="8dp" />
 
         <TextView
             android:id="@+id/morseText"
             android:layout_width="match_parent"
             android:layout_height="100dp"
-            android:background="@color/colorPrimary"
+            android:background="@color/colorPrimaryI"
             android:text="Vyluštěno"
             style="@style/StylePadding"/>
 
@@ -82,49 +81,107 @@
 
             <Space
                 android:layout_width="match_parent"
-                android:layout_height="11dp" />
+                android:layout_height="8dp" />
 
             <TextView
                 android:id="@+id/measureValue"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/colorPrimary"
+                android:background="@color/colorPrimaryI"
                 android:text="Naměřená hodnota"
                 style="@style/StylePadding"/>
 
             <Space
                 android:layout_width="match_parent"
-                android:layout_height="11dp" />
+                android:layout_height="8dp" />
 
             <TextView
                 android:id="@+id/morseValueView"
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
-                android:background="@color/colorPrimary"
+                android:background="@color/colorPrimaryI"
                 android:text="0/1"
                 style="@style/StylePadding"/>
             <Space
                 android:layout_width="match_parent"
-                android:layout_height="11dp" />
+                android:layout_height="8dp" />
 
             <TextView
                 android:id="@+id/morseSymbol"
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
-                android:background="@color/colorPrimary"
+                android:background="@color/colorPrimaryI"
                 android:text="Morseovka"
                 style="@style/StylePadding"/>
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="8dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="horizontal"
-                style="@style/StylePadding">
+                android:orientation="vertical">
 
-                <NumberPicker
-                    android:id="@+id/numberPickeLimit"
-                    android:layout_width="38dp"
-                    android:layout_height="wrap_content" />
+                <TextView
+                    android:id="@+id/textViewSensitivity"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:background="@color/colorPrimaryI"
+                    android:text="Threshold"
+                    android:textAlignment="center" />
+
+
+                <SeekBar
+                    android:id="@+id/seekBarTresh"
+                    style="@style/Widget.AppCompat.SeekBar.Discrete"
+                    android:layout_width="match_parent"
+                    android:layout_height="51dp"
+                    android:layout_weight="1"
+                    android:background="@color/colorPrimaryI" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                style="@style/StylePadding"
+                android:layout_width="match_parent"
+                android:layout_height="162dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textViewSpeed"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:background="@color/colorPrimaryI"
+                    android:text="Frequency"
+                    android:textAlignment="center" />
+
+                <SeekBar
+                    android:id="@+id/seekBarFreq"
+                    style="@style/Widget.AppCompat.SeekBar.Discrete"
+                    android:layout_width="match_parent"
+                    android:layout_height="51dp"
+                    android:layout_weight="1"
+                    android:background="@color/colorPrimaryI" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:padding="5dp">
+
+                    <NumberPicker
+                        android:id="@+id/numberPickerFreq"
+                        android:layout_width="match_parent"
+                        android:layout_height="167dp"
+                        android:background="@color/colorPrimaryI"
+                        android:padding="5dp"
+                        android:textAlignment="viewStart"/>
+                    
+
+                </LinearLayout>
 
 
             </LinearLayout>

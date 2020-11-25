@@ -62,14 +62,11 @@ public class Morse {
             {
                 symbol = '/';
             }
-            else if(value == 10)
+            else if(value <= 110)
             {
                 symbol = '.';
             }
-            else if(value == 1110)
-            {
-                symbol = '-';
-            }
+
             else{
                 symbol = '-';//'?';
             }
@@ -91,9 +88,11 @@ public class Morse {
     public static void SolveChar(String morseValue, int size ){
 
         if(morseValue.equals("//")) {
-            if(!pause){
-                pause = true;
+            if(pause){
                 Solving.append(" ");
+            }
+            else{
+                pause = true;
             }
             return;
         }

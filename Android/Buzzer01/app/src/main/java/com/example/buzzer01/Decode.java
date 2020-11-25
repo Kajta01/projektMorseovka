@@ -11,6 +11,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
@@ -37,10 +38,11 @@ import com.google.android.material.chip.Chip;
 public class Decode extends AppCompatActivity {
     static float SOUND_LIMIT = 0.02f;
     static int BOOST = 10;
+    static int FREQUENCY = 12000;
 
     boolean run = false;
 
-    private int frequency = 12000;
+
     private AudioRecord audioRecord;
     private Decode.RecordAudioTask recordTask;
     private float[] buffer;
@@ -57,7 +59,9 @@ public class Decode extends AppCompatActivity {
     private TextView morseValueView;
     private TextView morseSymbol;
     private TextView morseText;
-    private NumberPicker numberPickeLimit;
+    private NumberPicker numberPickerLimit;
+    private NumberPicker numberPickerFreq;
+    private SeekBar seekBarTresh;
     private CheckBox checkMore;
     private LinearLayout moreLayout;
 
@@ -98,14 +102,21 @@ public class Decode extends AppCompatActivity {
                 } else {
                     if(getPermission()) {
                         startRecording(); } } }});
+
         clearButton = this.findViewById(R.id.ClearButton);
         clearButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) { ClearData();}});
-        numberPickeLimit = this.findViewById(R.id.numberPickeLimit);
-        numberPickeLimit.setOnValueChangedListener(new NumberLimitListener());
+
+
+        seekBarTresh = this.findViewById(R.id.seekBarTresh);
+        seekBarTresh.setOnSeekBarChangeListener(new SeekTreshListener());
+
+        numberPickerFreq = this.findViewById(R.id.numberPickerFreq);
+
         checkMore = findViewById(R.id.checkMore);
         checkMore.setOnCheckedChangeListener(new moreCheckedListener());
+
         moreLayout = this.findViewById(R.id.moreLayout);
 
 
@@ -113,17 +124,32 @@ public class Decode extends AppCompatActivity {
         ClearData();
 
         this.setUpSndInTime();
-        this.setNumberPicker();
+
+        this.setSeekTresh();
+        this.setNumberPickerFREQ();
 
         if(this.getPermission()) this.setUpMicrophone();
     }
 
-    private void setNumberPicker() {
-        numberPickeLimit.setMaxValue(10);
-        numberPickeLimit.setMinValue(0);
-        numberPickeLimit.setWrapSelectorWheel(false);
-        numberPickeLimit.setValue((int)(SOUND_LIMIT*100));
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void setSeekTresh(){
+        seekBarTresh.setMax(10);
+        seekBarTresh.setMin(0);
+        seekBarTresh.setProgress((int)(SOUND_LIMIT*100));
+    }
 
+    private void setNumberPickerLimit() {
+        numberPickerLimit.setMaxValue(10);
+        numberPickerLimit.setMinValue(0);
+        numberPickerLimit.setWrapSelectorWheel(false);
+        numberPickerLimit.setValue((int)(SOUND_LIMIT*100));
+    }
+    private void setNumberPickerFREQ() {
+        numberPickerFreq.setMaxValue(FREQUENCY + 500);
+        numberPickerFreq.setMinValue(FREQUENCY - 500);
+
+        numberPickerFreq.setWrapSelectorWheel(false);
+        numberPickerFreq.setValue((int)(FREQUENCY));
     }
 
     @Override
@@ -141,9 +167,9 @@ public class Decode extends AppCompatActivity {
         // Nastavení mikrofonu
         int channelConfiguration = AudioFormat.CHANNEL_IN_MONO;
         int audioEncoding = AudioFormat.ENCODING_PCM_FLOAT;
-        int bufferSize = AudioRecord.getMinBufferSize(frequency, channelConfiguration, audioEncoding);
+        int bufferSize = AudioRecord.getMinBufferSize(FREQUENCY, channelConfiguration, audioEncoding);
 
-        audioRecord = new AudioRecord( MediaRecorder.AudioSource.MIC, frequency,
+        audioRecord = new AudioRecord( MediaRecorder.AudioSource.MIC, FREQUENCY,
                 channelConfiguration, audioEncoding, bufferSize);
     }
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -151,7 +177,8 @@ public class Decode extends AppCompatActivity {
         this.setUpMicrophone();
         run = true;
         startStopButton.setText("Stop");
-        startStopButton.setBackgroundColor(getColor(R.color.darkGreen));
+
+        startStopButton.getBackground().setColorFilter(getColor(R.color.darkGreen), PorterDuff.Mode.MULTIPLY);
         recordTask = new Decode.RecordAudioTask();
         recordTask.execute();
 
@@ -160,7 +187,10 @@ public class Decode extends AppCompatActivity {
     private void cancelRecording(){
         run = false;
         startStopButton.setText("Start");
-        startStopButton.setBackgroundColor(getColor(R.color.darkRed));
+        startStopButton.getBackground().clearColorFilter();
+       // startStopButton.setBackgroundColor(getColor(R.color.darkRed));
+        //startStopButton.setBackgroundResource(android.R.drawable.btn_default);
+
         if(audioRecord != null) {
             //  recordTask.cancel(true);
             audioRecord.stop();
@@ -213,7 +243,7 @@ public class Decode extends AppCompatActivity {
 
     private void setUpSndInTime() {
         // Nastavení vykreslování audia v závislosti na čase (imageView)
-        Bitmap bitmapSnd = Bitmap.createBitmap(countToRefresh , imageViewHeight, Bitmap.Config.ARGB_8888);
+        Bitmap bitmapSnd = Bitmap.createBitmap(countToRefresh , imageViewHeight +1, Bitmap.Config.ARGB_8888);
         canvasSnd = new Canvas(bitmapSnd);
         paintSnd = new Paint();
         paintSnd.setColor(Color.BLACK);
@@ -222,7 +252,7 @@ public class Decode extends AppCompatActivity {
       // canvasSnd.drawLine(-20, imageViewHeight-(imageViewHeight*SOUND_LIMIT*BOOST)-10, countToRefresh, imageViewHeight-(imageViewHeight*SOUND_LIMIT*BOOST)-10, paintSnd);
 
 
-        canvasSnd.drawLine(0, imageViewHeight-(imageViewHeight*SOUND_LIMIT*BOOST)-1, countToRefresh, imageViewHeight-(imageViewHeight*SOUND_LIMIT*BOOST)-1, paintSnd);
+        canvasSnd.drawLine(0, imageViewHeight-(imageViewHeight*SOUND_LIMIT*BOOST), countToRefresh, imageViewHeight-(imageViewHeight*SOUND_LIMIT*BOOST), paintSnd);
 
         paintSnd.setColor(Color.RED);
     }
@@ -299,8 +329,6 @@ public class Decode extends AppCompatActivity {
                 morseText.setText(Morse.getSolving());
 
 
-                if(onPushCounter == 0)
-                    startStopButton.setBackgroundColor(getColor(R.color.darkRed));
             } catch (Throwable e) {
                 e.printStackTrace();
                 Log.e("Graph", "Selhalo vykresleni");
@@ -327,12 +355,23 @@ public class Decode extends AppCompatActivity {
     }
 
 
-    private class NumberLimitListener implements NumberPicker.OnValueChangeListener {
+    private class SeekTreshListener implements SeekBar.OnSeekBarChangeListener {
+
+
         @Override
-        public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-            SOUND_LIMIT = (float) (newVal/100.0);
-            canvasSnd.drawLine(0, imageViewHeight-(imageViewHeight*SOUND_LIMIT*BOOST)-1, countToRefresh, imageViewHeight-(imageViewHeight*SOUND_LIMIT*BOOST)-1, paintSnd);
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            SOUND_LIMIT = (float) (progress/100.0);
+           // canvasSnd.drawLine(0, imageViewHeight-(imageViewHeight*SOUND_LIMIT*BOOST)-1, countToRefresh, imageViewHeight-(imageViewHeight*SOUND_LIMIT*BOOST)-1, paintSnd);
             ClearData();
+        }
+
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
 
         }
     }

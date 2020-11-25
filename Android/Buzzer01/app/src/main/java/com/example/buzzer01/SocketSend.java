@@ -24,6 +24,7 @@ public class SocketSend extends AppCompatActivity {
 
     private final String REMOTE_PORT_KEY = "remote_port_key";
     private final String REMOTE_IP_KEY = "remote_ip_key";
+    private final String REMOTE_MESSAGE = "remote_message";
 
     private Button buttonSend;
     private EditText editRemoteIp;
@@ -61,8 +62,8 @@ public class SocketSend extends AppCompatActivity {
         SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString(REMOTE_PORT_KEY, editRemotePort.getText().toString());
-        editor.putString(REMOTE_PORT_KEY, editRemotePort.getText().toString());
         editor.putString(REMOTE_IP_KEY, editRemoteIp.getText().toString());
+        editor.putString(REMOTE_MESSAGE, editMessage.getText().toString());
         editor.commit();
         super.onStop();
     }
@@ -73,6 +74,7 @@ public class SocketSend extends AppCompatActivity {
         if (sharedPref != null) {
             editRemotePort.setText(sharedPref.getString(REMOTE_PORT_KEY, getString(R.string.default_remote_port)));
             editRemoteIp.setText(sharedPref.getString(REMOTE_IP_KEY, getString(R.string.ip_zero)));
+            editMessage.setText(sharedPref.getString(REMOTE_MESSAGE, "a"));
         }
         super.onStart();
     }
