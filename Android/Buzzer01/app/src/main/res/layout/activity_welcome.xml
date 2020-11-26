@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Welcome">
+    tools:context=".Welcome"
+    android:theme="@style/AppTheme.ActionBar" >>
 
 
 
@@ -12,6 +13,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="125dp"
+            android:text="Decode Morse"
+            android:textSize="50sp" />
 
         <Space
             android:layout_width="match_parent"

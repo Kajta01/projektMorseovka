@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -19,8 +20,11 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Layout;
+import android.text.TextUtils;
+import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -59,9 +63,12 @@ public class Decode extends AppCompatActivity {
     private TextView morseValueView;
     private TextView morseSymbol;
     private TextView morseText;
-    private NumberPicker numberPickerLimit;
-    private NumberPicker numberPickerFreq;
+
+    private TextView textViewFreqValue;
+    private TextView textViewTreshValue;
+
     private SeekBar seekBarTresh;
+    private SeekBar seekBarFreq;
     private CheckBox checkMore;
     private LinearLayout moreLayout;
 
@@ -112,12 +119,16 @@ public class Decode extends AppCompatActivity {
         seekBarTresh = this.findViewById(R.id.seekBarTresh);
         seekBarTresh.setOnSeekBarChangeListener(new SeekTreshListener());
 
-        numberPickerFreq = this.findViewById(R.id.numberPickerFreq);
+        seekBarFreq = this.findViewById(R.id.seekBarFreq);
+        seekBarFreq.setOnSeekBarChangeListener(new SeekFreqListener());
+
 
         checkMore = findViewById(R.id.checkMore);
         checkMore.setOnCheckedChangeListener(new moreCheckedListener());
-
         moreLayout = this.findViewById(R.id.moreLayout);
+
+        textViewFreqValue = findViewById(R.id.textViewFreqValue);
+        textViewTreshValue = findViewById(R.id.textViewTreshValue);
 
 
         Morse.initMorse();
@@ -126,7 +137,7 @@ public class Decode extends AppCompatActivity {
         this.setUpSndInTime();
 
         this.setSeekTresh();
-        this.setNumberPickerFREQ();
+        this.setSeekFreq();
 
         if(this.getPermission()) this.setUpMicrophone();
     }
@@ -135,22 +146,19 @@ public class Decode extends AppCompatActivity {
     private void setSeekTresh(){
         seekBarTresh.setMax(10);
         seekBarTresh.setMin(0);
+        seekBarTresh.incrementProgressBy(1);
         seekBarTresh.setProgress((int)(SOUND_LIMIT*100));
+        textViewTreshValue.setText(String.valueOf(SOUND_LIMIT));
+    }
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void setSeekFreq(){
+        seekBarFreq.setMax(FREQUENCY + 8000);
+        seekBarFreq.setMin(FREQUENCY - 8000);
+        seekBarFreq.incrementProgressBy(100);
+        seekBarFreq.setProgress(FREQUENCY);
+        textViewFreqValue.setText(String.valueOf(FREQUENCY));
     }
 
-    private void setNumberPickerLimit() {
-        numberPickerLimit.setMaxValue(10);
-        numberPickerLimit.setMinValue(0);
-        numberPickerLimit.setWrapSelectorWheel(false);
-        numberPickerLimit.setValue((int)(SOUND_LIMIT*100));
-    }
-    private void setNumberPickerFREQ() {
-        numberPickerFreq.setMaxValue(FREQUENCY + 500);
-        numberPickerFreq.setMinValue(FREQUENCY - 500);
-
-        numberPickerFreq.setWrapSelectorWheel(false);
-        numberPickerFreq.setValue((int)(FREQUENCY));
-    }
 
     @Override
     protected void onResume() {
@@ -249,13 +257,12 @@ public class Decode extends AppCompatActivity {
         paintSnd.setColor(Color.BLACK);
         graphView.setImageBitmap(bitmapSnd);
 
-      // canvasSnd.drawLine(-20, imageViewHeight-(imageViewHeight*SOUND_LIMIT*BOOST)-10, countToRefresh, imageViewHeight-(imageViewHeight*SOUND_LIMIT*BOOST)-10, paintSnd);
-
-
         canvasSnd.drawLine(0, imageViewHeight-(imageViewHeight*SOUND_LIMIT*BOOST), countToRefresh, imageViewHeight-(imageViewHeight*SOUND_LIMIT*BOOST), paintSnd);
 
         paintSnd.setColor(Color.RED);
     }
+
+    /******************************************************************/
     private class RecordAudioTask extends AsyncTask<Void, Void, Void> {
         private int maxIndex;
         private int onPushCounter;
@@ -340,7 +347,7 @@ public class Decode extends AppCompatActivity {
             {
                 System.out.println("\n refresh!\n");
                 counterToRefresh = 0;
-                canvasSnd.drawColor(getColor(R.color.colorPrimary));
+                canvasSnd.drawColor(getColor(R.color.colorPrimaryI));
             }
 
             float Maximum = (float)((((micMax)*imageViewHeight))*BOOST)+1;
@@ -354,7 +361,7 @@ public class Decode extends AppCompatActivity {
 
     }
 
-
+    /******************************************************************/
     private class SeekTreshListener implements SeekBar.OnSeekBarChangeListener {
 
 
@@ -362,7 +369,56 @@ public class Decode extends AppCompatActivity {
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             SOUND_LIMIT = (float) (progress/100.0);
            // canvasSnd.drawLine(0, imageViewHeight-(imageViewHeight*SOUND_LIMIT*BOOST)-1, countToRefresh, imageViewHeight-(imageViewHeight*SOUND_LIMIT*BOOST)-1, paintSnd);
+            textViewTreshValue.setText(String.valueOf(SOUND_LIMIT));
             ClearData();
+        }
+
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+
+        }
+    }
+    /******************************************************************/
+
+    private class moreCheckedListener implements CompoundButton.OnCheckedChangeListener {
+
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            if(isChecked){
+                moreLayout.setVisibility(View.VISIBLE);
+                LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) moreLayout.getLayoutParams();
+                params.height = LinearLayout.LayoutParams.WRAP_CONTENT;
+                moreLayout.setLayoutParams(params);
+
+
+            } else {
+                LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) moreLayout.getLayoutParams();
+                moreLayout.setVisibility(View.INVISIBLE);
+
+                params.height = 0;
+                moreLayout.setLayoutParams(params);
+
+            }
+        }
+    }
+    /******************************************************************/
+    private class SeekFreqListener implements SeekBar.OnSeekBarChangeListener {
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            if(progress > 1000 && fromUser) {
+                    FREQUENCY = progress;
+                textViewFreqValue.setText(String.valueOf(FREQUENCY));
+
+                //  recreate();
+                cancelRecording();
+                startRecording();
+                    ClearData();
+                }
         }
 
         @Override
@@ -377,25 +433,4 @@ public class Decode extends AppCompatActivity {
     }
 
 
-    private class moreCheckedListener implements CompoundButton.OnCheckedChangeListener {
-
-        @Override
-        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            if(isChecked){
-                moreLayout.setVisibility(View.VISIBLE);
-                LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) moreLayout.getLayoutParams();
-                params.height = LinearLayout.LayoutParams.MATCH_PARENT;
-                moreLayout.setLayoutParams(params);
-
-
-            } else {
-                LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) moreLayout.getLayoutParams();
-                moreLayout.setVisibility(View.INVISIBLE);
-
-                params.height = 0;
-                moreLayout.setLayoutParams(params);
-
-            }
-        }
-    }
 }
