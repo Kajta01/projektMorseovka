@@ -73,7 +73,8 @@
                 android:background="@color/colorPrimaryI"
                 android:hint="0/1"
                 android:scrollbarAlwaysDrawHorizontalTrack="true"
-                android:scrollbars="horizontal"
+                android:scrollbarAlwaysDrawVerticalTrack="true"
+                android:scrollbars="vertical"
                 android:verticalScrollbarPosition="defaultPosition" />
             <Space
                 android:layout_width="match_parent"
@@ -85,7 +86,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
                 android:background="@color/colorPrimaryI"
-                android:hint="Morseovka" />
+                android:hint="Morseovka"
+                android:scrollbars="vertical"
+                android:verticalScrollbarPosition="defaultPosition" />
 
             <Space
                 android:layout_width="match_parent"
@@ -108,6 +111,7 @@
                         android:layout_gravity="center"
                         android:background="@color/colorPrimaryI"
                         android:text="Threshold:  "
+                        android:textColor="@color/colorPrimary"
                         android:textAlignment="viewStart" />
 
                     <TextView
@@ -151,6 +155,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="start"
+                        android:textColor="@color/colorPrimary"
                         android:background="@color/colorPrimaryI"
                         android:text="Frequency:  "
                         android:textAlignment="viewStart" />
@@ -189,14 +194,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Start" />
+                android:text="Start"
+                android:textColor="@color/colorPrimary"
+                />
 
             <Button
                 android:id="@+id/ClearButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Clear" />
+                android:text="Clear"
+                android:textColor="@color/colorPrimary"/>
 
             <CheckBox
                 android:id="@+id/checkMore"

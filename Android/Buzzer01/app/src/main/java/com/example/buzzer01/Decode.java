@@ -21,6 +21,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.Layout;
 import android.text.TextUtils;
+import android.text.method.ScrollingMovementMethod;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -35,6 +36,7 @@ import android.widget.NumberPicker;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import java.lang.Math;
 
 import com.google.android.material.chip.Chip;
@@ -50,7 +52,7 @@ public class Decode extends AppCompatActivity {
     private AudioRecord audioRecord;
     private Decode.RecordAudioTask recordTask;
     private float[] buffer;
-    private int sampleCount = 128*8; //512
+    private int sampleCount = 128 * 8; //512
     private final int REQUEST_PERMISSION = 200;
 
     StringBuilder morseValue = new StringBuilder();
@@ -74,13 +76,12 @@ public class Decode extends AppCompatActivity {
 
     private Paint paintSnd;
     private Canvas canvasSnd;
-    private int countToRefresh=1000;
+    private int countToRefresh = 1000;
     private int imageViewHeight = 200;
-    private int counterToRefresh=0;
-    private double micMax=0;
+    private int counterToRefresh = 0;
+    private double micMax = 0;
 
     private int seekBarValue = 0;
-
 
 
     @Override
@@ -99,6 +100,8 @@ public class Decode extends AppCompatActivity {
         morseText = this.findViewById(R.id.morseText);
         measureValue = this.findViewById(R.id.measureValue);
         morseValueView = this.findViewById(R.id.morseValueView);
+        morseValueView.setMovementMethod(new ScrollingMovementMethod());
+
         startStopButton = this.findViewById(R.id.StartButton);
         startStopButton.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.M)
@@ -107,13 +110,20 @@ public class Decode extends AppCompatActivity {
                 if (run) {
                     cancelRecording();
                 } else {
-                    if(getPermission()) {
-                        startRecording(); } } }});
+                    if (getPermission()) {
+                        startRecording();
+                    }
+                }
+            }
+        });
 
         clearButton = this.findViewById(R.id.ClearButton);
         clearButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) { ClearData();}});
+            public void onClick(View v) {
+                ClearData();
+            }
+        });
 
         seekBarTresh = this.findViewById(R.id.seekBarTresh);
         seekBarTresh.setOnSeekBarChangeListener(new SeekTreshListener());
@@ -136,19 +146,21 @@ public class Decode extends AppCompatActivity {
         this.setSeekTresh();
         this.setSeekFreq();
 
-        if(this.getPermission()) this.setUpMicrophone();
+        if (this.getPermission()) this.setUpMicrophone();
     }
-// nastavení Seek bar
+
+    // nastavení Seek bar
     @RequiresApi(api = Build.VERSION_CODES.O)
-    private void setSeekTresh(){
+    private void setSeekTresh() {
         seekBarTresh.setMax(10);
         seekBarTresh.setMin(0);
         seekBarTresh.incrementProgressBy(1);
-        seekBarTresh.setProgress((int)(SOUND_LIMIT*100));
+        seekBarTresh.setProgress((int) (SOUND_LIMIT * 100));
         textViewTreshValue.setText(String.valueOf(SOUND_LIMIT));
     }
+
     @RequiresApi(api = Build.VERSION_CODES.O)
-    private void setSeekFreq(){
+    private void setSeekFreq() {
         seekBarFreq.setMax(FREQUENCY + 8000);
         seekBarFreq.setMin(FREQUENCY - 8000);
         seekBarFreq.incrementProgressBy(100);
@@ -174,11 +186,12 @@ public class Decode extends AppCompatActivity {
         int audioEncoding = AudioFormat.ENCODING_PCM_FLOAT;
         int bufferSize = AudioRecord.getMinBufferSize(FREQUENCY, channelConfiguration, audioEncoding);
 
-        audioRecord = new AudioRecord( MediaRecorder.AudioSource.MIC, FREQUENCY,
+        audioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC, FREQUENCY,
                 channelConfiguration, audioEncoding, bufferSize);
     }
+
     @RequiresApi(api = Build.VERSION_CODES.M)
-    private void startRecording(){
+    private void startRecording() {
         this.setUpMicrophone();
         run = true;
         startStopButton.setText("Stop");
@@ -188,19 +201,21 @@ public class Decode extends AppCompatActivity {
         recordTask.execute();
 
     }
+
     @RequiresApi(api = Build.VERSION_CODES.M)
-    private void cancelRecording(){
+    private void cancelRecording() {
         run = false;
         startStopButton.setText("Start");
         startStopButton.getBackground().clearColorFilter();
 
-        if(audioRecord != null) {
+        if (audioRecord != null) {
             audioRecord.stop();
         }
     }
-    private void ClearData(){
-        morseValue.delete(0,morseValue.length());
-        AllRereceiveData.delete(0,  AllRereceiveData.length());
+
+    private void ClearData() {
+        morseValue.delete(0, morseValue.length());
+        AllRereceiveData.delete(0, AllRereceiveData.length());
         morseValueView.setText("");
         measureValue.setText("");
 
@@ -213,6 +228,7 @@ public class Decode extends AppCompatActivity {
         setUpSndInTime();
         counterToRefresh = 0;
     }
+
     private boolean getPermission() {
         try {
             // Permission
@@ -222,21 +238,19 @@ public class Decode extends AppCompatActivity {
                         Manifest.permission.WRITE_EXTERNAL_STORAGE
                 }, REQUEST_PERMISSION);
                 return false;
-            }
-            else return true;
+            } else return true;
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("\n !!!!!!!\n"+e.toString());
+            System.out.println("\n !!!!!!!\n" + e.toString());
         }
         return false;
     }
+
     // Případ, kdy jsou permission zamítnuty
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if(requestCode == REQUEST_PERMISSION)
-        {
-            if(grantResults[0] != PackageManager.PERMISSION_GRANTED)
-            {
+        if (requestCode == REQUEST_PERMISSION) {
+            if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "Nelze použít mikrofon dokud aplikace nezíská oprávnění", Toast.LENGTH_SHORT).show();
                 finish();
             }
@@ -245,24 +259,25 @@ public class Decode extends AppCompatActivity {
 
     private void setUpSndInTime() {
         // Nastavení vykreslování audia v závislosti na čase (imageView) + vykreslení dodnotící urovně
-        Bitmap bitmapSnd = Bitmap.createBitmap(countToRefresh , imageViewHeight +1, Bitmap.Config.ARGB_8888);
+        Bitmap bitmapSnd = Bitmap.createBitmap(countToRefresh, imageViewHeight + 1, Bitmap.Config.ARGB_8888);
         canvasSnd = new Canvas(bitmapSnd);
         paintSnd = new Paint();
         paintSnd.setColor(Color.BLACK);
         graphView.setImageBitmap(bitmapSnd);
 
-        canvasSnd.drawLine(0, imageViewHeight-(imageViewHeight*SOUND_LIMIT*BOOST), countToRefresh, imageViewHeight-(imageViewHeight*SOUND_LIMIT*BOOST), paintSnd);
+        canvasSnd.drawLine(0, imageViewHeight - (imageViewHeight * SOUND_LIMIT * BOOST), countToRefresh, imageViewHeight - (imageViewHeight * SOUND_LIMIT * BOOST), paintSnd);
 
-        paintSnd.setColor(Color.RED);
+        paintSnd.setColor((R.color.colorPrimary));
     }
 
     /******************************************************************/
     private class RecordAudioTask extends AsyncTask<Void, Void, Void> {
         private int maxIndex;
         private int onPushCounter;
+
         @Override
         protected Void doInBackground(Void... voids) {
-            try{
+            try {
                 audioRecord.startRecording();
                 onPushCounter = 5 + seekBarValue;
                 while (run) {
@@ -282,19 +297,20 @@ public class Decode extends AppCompatActivity {
                         }
                     }
 
-                    if(micMax > 0.5) micMax = 0.5;
+                    if (micMax > 0.5) micMax = 0.5;
                     if (micMax < 0.001) micMax = 0;
                     measureValue.setText(String.valueOf(micMax));
 
-                    if(micMax > SOUND_LIMIT)  {valueMorse = 1;}
+                    if (micMax > SOUND_LIMIT) {
+                        valueMorse = 1;
+                    }
                     morseValue.append(valueMorse);
                     AllRereceiveData.append(valueMorse);
 
-                    if((morseValue.length() >  1) && valueMorse == 0)
-                    {
-                        Morse.SolveSymbol(morseValue.toString(),morseValue.length() );
+                    if ((morseValue.length() > 1) && valueMorse == 0) {
+                        Morse.SolveSymbol(morseValue.toString(), morseValue.length());
 
-                        morseValue.delete(0,morseValue.length());
+                        morseValue.delete(0, morseValue.length());
                         AllRereceiveData.append(",");
                     }
 
@@ -302,7 +318,7 @@ public class Decode extends AppCompatActivity {
                 }
                 // END OF WHILE
 
-                if(audioRecord != null) audioRecord.stop();
+                if (audioRecord != null) audioRecord.stop();
             } catch (Throwable t) {
                 t.printStackTrace();
                 Log.e("AudioRecord", "Recording Failed");
@@ -326,85 +342,92 @@ public class Decode extends AppCompatActivity {
                 Log.e("Graph", "Selhalo vykresleni");
             }
         }
+
         private void drawSndInTime() {
             // Vykreslení maximální hodnoty z audia vzorku
-            if(counterToRefresh >= countToRefresh)
-            {
+            if (counterToRefresh >= countToRefresh) {
                 System.out.println("\n refresh!\n");
                 counterToRefresh = 0;
                 canvasSnd.drawColor(getColor(R.color.colorPrimaryI));
             }
 
-            float Maximum = (float)((((micMax)*imageViewHeight))*BOOST)+1;
+            float Maximum = (float) ((((micMax) * imageViewHeight)) * BOOST) + 1;
 
-            canvasSnd.drawLine(counterToRefresh, imageViewHeight-1, counterToRefresh, imageViewHeight-Maximum, paintSnd);
+            canvasSnd.drawLine(counterToRefresh, imageViewHeight - 1, counterToRefresh, imageViewHeight - Maximum, paintSnd);
+            canvasSnd.drawLine(counterToRefresh+1, imageViewHeight - 1, counterToRefresh+1, imageViewHeight - Maximum, paintSnd);
 
             graphView.invalidate();
-            counterToRefresh++;
+            counterToRefresh=counterToRefresh+2;
         }
     }
 
 
-/********************Skrytí/zobrazení dalších možností **********************************************/
+    /********************Skrytí/zobrazení dalších možností **********************************************/
 
     private class moreCheckedListener implements CompoundButton.OnCheckedChangeListener {
 
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            if(isChecked){
+            if (isChecked) {
                 moreLayout.setVisibility(View.VISIBLE);
-                LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) moreLayout.getLayoutParams();
-                params.height = LinearLayout.LayoutParams.WRAP_CONTENT;
-                moreLayout.setLayoutParams(params);
+                // LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) moreLayout.getLayoutParams();
+                // params.height = LinearLayout.LayoutParams.WRAP_CONTENT;
+                // moreLayout.setLayoutParams(params);
 
 
             } else {
-                LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) moreLayout.getLayoutParams();
                 moreLayout.setVisibility(View.INVISIBLE);
 
-                params.height = 0;
-                moreLayout.setLayoutParams(params);
+               // LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) moreLayout.getLayoutParams();
+                // params.height = 0;
+               // moreLayout.setLayoutParams(params);
 
             }
         }
     }
+
     /******************** Změna frekvence **********************************************/
     private class SeekFreqListener implements SeekBar.OnSeekBarChangeListener {
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-            if(progress > 1000 && fromUser) {
-                    FREQUENCY = progress;
+            if (progress > 1000 && fromUser) {
+                FREQUENCY = progress;
                 textViewFreqValue.setText(String.valueOf(FREQUENCY));
 
                 //obnovení
                 cancelRecording();
                 startRecording();
-                    ClearData();
-                }
+                ClearData();
+            }
         }
 
         @Override
-        public void onStartTrackingTouch(SeekBar seekBar) {}
+        public void onStartTrackingTouch(SeekBar seekBar) {
+        }
 
         @Override
-        public void onStopTrackingTouch(SeekBar seekBar) { }
+        public void onStopTrackingTouch(SeekBar seekBar) {
+        }
     }
+
     /******************** Zmena threshold**********************************************/
     private class SeekTreshListener implements SeekBar.OnSeekBarChangeListener {
 
 
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-            SOUND_LIMIT = (float) (progress/100.0);
+            SOUND_LIMIT = (float) (progress / 100.0);
             textViewTreshValue.setText(String.valueOf(SOUND_LIMIT));
             ClearData();
         }
 
         @Override
-        public void onStartTrackingTouch(SeekBar seekBar) {}
+        public void onStartTrackingTouch(SeekBar seekBar) {
+        }
 
         @Override
-        public void onStopTrackingTouch(SeekBar seekBar) { }
+        public void onStopTrackingTouch(SeekBar seekBar) {
+        }
     }
 
 }
