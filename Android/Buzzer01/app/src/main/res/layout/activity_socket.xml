@@ -10,7 +10,8 @@
     <TextView
         android:id="@+id/textView2"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
         android:text="Send on socket"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
 
@@ -36,6 +37,7 @@
             android:layout_width="0dp"
             android:layout_height="51dp"
             android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:ems="10"
             android:hint="IP adress"
@@ -64,33 +66,35 @@
             android:id="@+id/editRemotePort"
             android:layout_width="0dp"
             android:layout_height="49dp"
+            android:layout_marginTop="8dp"
             android:ems="10"
             android:hint="port"
             android:inputType="textPersonName"
             app:layout_constraintBottom_toBottomOf="@+id/textView5"
             app:layout_constraintEnd_toEndOf="@+id/editRemoteIp"
             app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="@+id/editRemoteIp" />
+            app:layout_constraintStart_toStartOf="@+id/editRemoteIp"
+            app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
         <TextView
             android:id="@+id/textView6"
             android:layout_width="90dp"
             android:layout_height="46dp"
 
-            android:layout_marginTop="108dp"
+            android:layout_marginTop="116dp"
             android:gravity="bottom"
             android:text="Message"
             android:textAppearance="@style/TextAppearance.AppCompat.Body2"
             android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="@+id/textView5"
-            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/textView5"
             app:layout_constraintTop_toBottomOf="@+id/textView5" />
 
         <EditText
             android:id="@+id/editMessage"
-            android:layout_width="304dp"
-            android:layout_height="131dp"
+            android:layout_width="0dp"
+            android:layout_height="114dp"
             android:ems="10"
             android:gravity="start|top"
             android:hint="message"
@@ -98,7 +102,9 @@
             app:layout_constraintBottom_toBottomOf="@+id/textView6"
             app:layout_constraintEnd_toEndOf="@+id/editRemotePort"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/editRemotePort" />
+            app:layout_constraintStart_toStartOf="@+id/editRemotePort"
+            app:layout_constraintTop_toTopOf="@+id/textView6"
+            app:layout_constraintVertical_bias="0.485" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

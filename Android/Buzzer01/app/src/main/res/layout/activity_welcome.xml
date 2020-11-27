@@ -8,33 +8,49 @@
     android:theme="@style/AppTheme.ActionBar" >>
 
 
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/backgroundColor"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/textView"
+        <ImageView
+            android:id="@+id/imageView"
             android:layout_width="match_parent"
-            android:layout_height="125dp"
-            android:text="Decode Morse"
-            android:textSize="50sp" />
+            android:layout_height="424dp"
+            android:src="@drawable/morse_code" />
 
-        <Space
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="100dp" />
+            android:layout_height="261dp">
 
-        <Button
-            android:id="@+id/buttonSocket"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Send socket" />
+            <Button
+                android:id="@+id/buttonSocket"
+                android:layout_width="292dp"
+                android:layout_height="41dp"
+                android:background="@color/colorPrimary"
+                android:radius="15dp"
+                android:text="Send socket"
+                android:textColor="#FFFFFF"
+                app:layout_constraintBottom_toTopOf="@+id/buttonDecodeBuzzer"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <Button
-            android:id="@+id/buttonDecodeBuzzer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Decode Buzzer" />
+            <Button
+                android:id="@+id/buttonDecodeBuzzer"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_marginBottom="44dp"
+                android:background="@color/colorPrimary"
+                android:text="Decode Buzzer"
+                android:textColor="#FFFFFF"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/buttonSocket"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/buttonSocket" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
     </LinearLayout>
 </LinearLayout>

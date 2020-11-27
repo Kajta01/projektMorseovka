@@ -115,13 +115,11 @@ public class Decode extends AppCompatActivity {
             @Override
             public void onClick(View v) { ClearData();}});
 
-
         seekBarTresh = this.findViewById(R.id.seekBarTresh);
         seekBarTresh.setOnSeekBarChangeListener(new SeekTreshListener());
 
         seekBarFreq = this.findViewById(R.id.seekBarFreq);
         seekBarFreq.setOnSeekBarChangeListener(new SeekFreqListener());
-
 
         checkMore = findViewById(R.id.checkMore);
         checkMore.setOnCheckedChangeListener(new moreCheckedListener());
@@ -129,7 +127,6 @@ public class Decode extends AppCompatActivity {
 
         textViewFreqValue = findViewById(R.id.textViewFreqValue);
         textViewTreshValue = findViewById(R.id.textViewTreshValue);
-
 
         Morse.initMorse();
         ClearData();
@@ -141,7 +138,7 @@ public class Decode extends AppCompatActivity {
 
         if(this.getPermission()) this.setUpMicrophone();
     }
-
+// nastavení Seek bar
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void setSeekTresh(){
         seekBarTresh.setMax(10);
@@ -196,11 +193,8 @@ public class Decode extends AppCompatActivity {
         run = false;
         startStopButton.setText("Start");
         startStopButton.getBackground().clearColorFilter();
-       // startStopButton.setBackgroundColor(getColor(R.color.darkRed));
-        //startStopButton.setBackgroundResource(android.R.drawable.btn_default);
 
         if(audioRecord != null) {
-            //  recordTask.cancel(true);
             audioRecord.stop();
         }
     }
@@ -250,7 +244,7 @@ public class Decode extends AppCompatActivity {
     }
 
     private void setUpSndInTime() {
-        // Nastavení vykreslování audia v závislosti na čase (imageView)
+        // Nastavení vykreslování audia v závislosti na čase (imageView) + vykreslení dodnotící urovně
         Bitmap bitmapSnd = Bitmap.createBitmap(countToRefresh , imageViewHeight +1, Bitmap.Config.ARGB_8888);
         canvasSnd = new Canvas(bitmapSnd);
         paintSnd = new Paint();
@@ -275,12 +269,8 @@ public class Decode extends AppCompatActivity {
                     // Získání vzorků
                     int bufferReadResult = audioRecord.read(buffer, 0, sampleCount, AudioRecord.READ_BLOCKING);
 
-                    //System.out.println("\n result:"+ bufferReadResult + "\n");
-                    // Reset hodnot
                     micMax = 0;
 
-
-                    // Úprava vstupním hodnot na rozsah -1 až 1
                     double value = 0;
                     int valueMorse = 0;
                     for (int i = 0; i < sampleCount && i < bufferReadResult; i++) {
@@ -290,8 +280,8 @@ public class Decode extends AppCompatActivity {
                         if (micMax < value) {
                             micMax = value;
                         }
-
                     }
+
                     if(micMax > 0.5) micMax = 0.5;
                     if (micMax < 0.001) micMax = 0;
                     measureValue.setText(String.valueOf(micMax));
@@ -308,12 +298,10 @@ public class Decode extends AppCompatActivity {
                         AllRereceiveData.append(",");
                     }
 
-
-
                     onProgressUpdate();
-
                 }
                 // END OF WHILE
+
                 if(audioRecord != null) audioRecord.stop();
             } catch (Throwable t) {
                 t.printStackTrace();
@@ -326,15 +314,12 @@ public class Decode extends AppCompatActivity {
             try {
                 int value = maxIndex;
 
-                // Zavolání funkcí
                 this.drawSndInTime();
-
 
                 // Tisk textu
                 morseValueView.setText(AllRereceiveData.toString());
                 morseSymbol.setText(Morse.getMorseChar());
                 morseText.setText(Morse.getSolving());
-
 
             } catch (Throwable e) {
                 e.printStackTrace();
@@ -342,7 +327,7 @@ public class Decode extends AppCompatActivity {
             }
         }
         private void drawSndInTime() {
-            // Vykreslení maximální hodnoty z audia vzorku do imageView -> pod grafy
+            // Vykreslení maximální hodnoty z audia vzorku
             if(counterToRefresh >= countToRefresh)
             {
                 System.out.println("\n refresh!\n");
@@ -353,37 +338,14 @@ public class Decode extends AppCompatActivity {
             float Maximum = (float)((((micMax)*imageViewHeight))*BOOST)+1;
 
             canvasSnd.drawLine(counterToRefresh, imageViewHeight-1, counterToRefresh, imageViewHeight-Maximum, paintSnd);
-            canvasSnd.drawLine(counterToRefresh+1, imageViewHeight-1, counterToRefresh+1, imageViewHeight-Maximum, paintSnd);
 
             graphView.invalidate();
-            counterToRefresh=counterToRefresh+2;
-        }
-
-    }
-
-    /******************************************************************/
-    private class SeekTreshListener implements SeekBar.OnSeekBarChangeListener {
-
-
-        @Override
-        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-            SOUND_LIMIT = (float) (progress/100.0);
-           // canvasSnd.drawLine(0, imageViewHeight-(imageViewHeight*SOUND_LIMIT*BOOST)-1, countToRefresh, imageViewHeight-(imageViewHeight*SOUND_LIMIT*BOOST)-1, paintSnd);
-            textViewTreshValue.setText(String.valueOf(SOUND_LIMIT));
-            ClearData();
-        }
-
-        @Override
-        public void onStartTrackingTouch(SeekBar seekBar) {
-
-        }
-
-        @Override
-        public void onStopTrackingTouch(SeekBar seekBar) {
-
+            counterToRefresh++;
         }
     }
-    /******************************************************************/
+
+
+/********************Skrytí/zobrazení dalších možností **********************************************/
 
     private class moreCheckedListener implements CompoundButton.OnCheckedChangeListener {
 
@@ -406,7 +368,7 @@ public class Decode extends AppCompatActivity {
             }
         }
     }
-    /******************************************************************/
+    /******************** Změna frekvence **********************************************/
     private class SeekFreqListener implements SeekBar.OnSeekBarChangeListener {
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -414,7 +376,7 @@ public class Decode extends AppCompatActivity {
                     FREQUENCY = progress;
                 textViewFreqValue.setText(String.valueOf(FREQUENCY));
 
-                //  recreate();
+                //obnovení
                 cancelRecording();
                 startRecording();
                     ClearData();
@@ -422,15 +384,27 @@ public class Decode extends AppCompatActivity {
         }
 
         @Override
-        public void onStartTrackingTouch(SeekBar seekBar) {
+        public void onStartTrackingTouch(SeekBar seekBar) {}
 
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) { }
+    }
+    /******************** Zmena threshold**********************************************/
+    private class SeekTreshListener implements SeekBar.OnSeekBarChangeListener {
+
+
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            SOUND_LIMIT = (float) (progress/100.0);
+            textViewTreshValue.setText(String.valueOf(SOUND_LIMIT));
+            ClearData();
         }
 
         @Override
-        public void onStopTrackingTouch(SeekBar seekBar) {
+        public void onStartTrackingTouch(SeekBar seekBar) {}
 
-        }
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) { }
     }
-
 
 }

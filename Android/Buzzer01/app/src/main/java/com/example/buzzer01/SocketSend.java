@@ -87,8 +87,6 @@ public class SocketSend extends AppCompatActivity {
         client.setMessage(message);
 
         client.execute();
-
-
     }
 
     public class UDPClient extends AsyncTask<Void, Void, Void>
@@ -121,7 +119,6 @@ public class SocketSend extends AppCompatActivity {
                 outputStream.write(message);
                 outputStream.flush();
                 outputStream.close();
-
 
                 socket.close();
             } catch (IOException e) {
