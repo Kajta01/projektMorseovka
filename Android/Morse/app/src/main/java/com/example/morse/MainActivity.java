@@ -18,7 +18,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void launchHistogramActivity(View view) {
-        Intent intent = new Intent(this, Histogram.class);
+        Intent intent = new Intent(this, AndroidHistogram.class);
         startActivity(intent);
         Log.d(LOG_TAG, "Button clicked!");
     }
