@@ -16,13 +16,15 @@
 
 #define BuzzPin 1
 
-const int TIME_UNIT = 150;
+const int FREQ_BUZZER = 4600;
+
+const int TIME_UNIT = 120;
 
 const int DOT = TIME_UNIT;
-const int DASH = 3 * TIME_UNIT;
-const int SYMBOL_SPACE = TIME_UNIT;
-const int LETTER_SPACE = 3 * TIME_UNIT - SYMBOL_SPACE;
-const int WORD_SPACE = 7 * TIME_UNIT - LETTER_SPACE;
+const int DASH = 2 * TIME_UNIT;
+const int SYMBOL_SPACE = 2 * TIME_UNIT;
+const int LETTER_SPACE = 0.5 * TIME_UNIT ;
+const int WORD_SPACE = 4* TIME_UNIT;
 
 int main(void) {
 	printf("Server\n"); /* prints Socket_Server */
@@ -80,6 +82,7 @@ int main(void) {
 
 void printMorse(char* message) {
 	//loop through the message
+	delay(3000);
 	for (int i = 0; i < strlen(message); i++) {
 		printf("Char: %c\n", message[i]);
 		fflush(stdout);
@@ -91,7 +94,7 @@ void printMorse(char* message) {
 			int count = strlen(morseSymbols);
 
 			for (int i = 0; i < count; i++) {
-				softToneWrite(BuzzPin, 500);
+				softToneWrite(BuzzPin, FREQ_BUZZER);
 
 				int symbolTime;
 				char symbol = morseSymbols[i];

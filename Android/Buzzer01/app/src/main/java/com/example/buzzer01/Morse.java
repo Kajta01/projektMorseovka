@@ -14,13 +14,8 @@ public class Morse {
     static private StringBuilder Solving = new StringBuilder();
     static private Map<String,Character> map = new HashMap<>();
 
-    static int COUNT_DOT = 1;
-    static int COUNT_DASH = 3;
-    static int COUNT_SYMBOL_SPACE = 1;
-    static int COUNT_LETTER_SPACE = 2;
-    static int COUNT_WORD_SPACE = 5;
     /////////////////////////////////////
-    static private boolean pause = false;
+    static private int pause = 0;
 
     public static void initMorse()
     {
@@ -58,20 +53,16 @@ public class Morse {
             int value = Integer.parseInt(morseValue);
             char symbol;
 
-            if(value == 0)
+            if(value <= 10)
             {
                 symbol = '/';
             }
-            else if(value == 10)
+            else if(value <= 1110)
             {
                 symbol = '.';
             }
-            else if(value == 1110)
-            {
-                symbol = '-';
-            }
             else{
-                symbol = '-';//'?';
+                symbol = '-';
             }
             MorseChar.append(symbol);
             MorseSymbol.append(symbol);
@@ -80,38 +71,36 @@ public class Morse {
                 SolveChar(MorseSymbol.toString(), MorseSymbol.length());
                 MorseSymbol.delete(0,MorseSymbol.length());
             }
-
         }
         catch (Exception e)
         {
             System.out.println("\n !!!!Mooc jednicek!!!\n"+e.toString());
         }
     }
+
     @RequiresApi(api = Build.VERSION_CODES.N)
     public static void SolveChar(String morseValue, int size ){
 
         if(morseValue.equals("//")) {
-            if(!pause){
-                pause = true;
+            if(pause == 1){
                 Solving.append(" ");
             }
+            pause ++;
             return;
         }
 
         String input = morseValue.replace("/", "");
 
         Character fetchedChar = map.get(input);
-        // System.out.println(e.getKey() + " " + e.getValue());
 
         if (fetchedChar != null) {
             Solving.append(fetchedChar);
         } else {
             Solving.append("?");
         }
-        pause = false;
-
-
+        pause = 0;
     }
+
     public static String getMorseChar(){
         return MorseChar.toString();
     }
