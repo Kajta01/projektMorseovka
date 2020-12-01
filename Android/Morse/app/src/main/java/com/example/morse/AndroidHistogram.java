@@ -25,6 +25,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import androidx.loader.content.CursorLoader;
 
 //import com.example.myandroidhistogram.R;
 
@@ -235,7 +236,7 @@ public class AndroidHistogram extends MainActivity {
             ((Button) findViewById(R.id.hst_btn)).setVisibility(View.VISIBLE);
             ((Button) findViewById(R.id.hst_color_btn)).setVisibility(View.VISIBLE);
 
-            dismissDialog(0);
+            //dismissDialog(0);
         }
 
     }
