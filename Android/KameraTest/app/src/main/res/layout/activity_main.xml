@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+
+    <LinearLayout
+        android:id="@+id/lyt"
+        android:layout_width="400dp"
+        android:layout_height="209dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextureView
+            android:id="@+id/textureViewImage"
+            android:layout_width="wrap_content"
+            android:layout_height="209dp" />
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/lyt_color"
+        android:layout_width="400dp"
+        android:layout_height="476dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.454"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/lyt"
+        app:layout_constraintVertical_bias="0.847">
+
+
+        <ImageView
+            android:id="@+id/filter_image_view"
+            android:layout_width="match_parent"
+            android:layout_height="88dp"
+            app:srcCompat="@mipmap/ic_launcher" />
+
+
+        <ImageView
+            android:id="@+id/imageViewGray"
+            android:layout_width="match_parent"
+            android:layout_height="209dp"
+            app:srcCompat="@mipmap/ic_launcher" />
+
+        <SeekBar
+            android:id="@+id/seekBarJAS"
+            android:layout_width="match_parent"
+            android:layout_height="36dp" />
+
+        <EditText
+            android:id="@+id/editTextJas"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="number" />
+
+        <EditText
+            android:id="@+id/editTextCountPX"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="number" />
+
+        <TextView
+            android:id="@+id/textViewJas"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="TextView" />
+
+        <TextView
+            android:id="@+id/textViewShinning"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="TextView" />
+
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnCapture"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="Vyfoť"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/display_RGB"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="160dp"
+        android:layout_marginTop="16dp"
+        android:text="RGB"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
