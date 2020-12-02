@@ -14,6 +14,7 @@ import android.widget.Button;
 
 public class Welcome extends AppCompatActivity {
     private Button buttonDecodeBuzzer;
+    private Button buttonDecodeCamera;
     private Button buttonSocket;
 
     @Override
@@ -26,6 +27,14 @@ public class Welcome extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(Welcome.this, Decode.class);
+                startActivityForResult(intent,1);
+            }
+        });
+        buttonDecodeCamera = this.findViewById(R.id.buttonDecodeCamera);
+        buttonDecodeCamera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Welcome.this, camera.class);
                 startActivityForResult(intent,1);
             }
         });
