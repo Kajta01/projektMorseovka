@@ -22,6 +22,8 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.util.Size;
 import android.view.Display;
 import android.view.Surface;
@@ -30,6 +32,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -50,14 +53,21 @@ public class camera extends AppCompatActivity {
 
     // User interface
     private TextureView textureView;
-    private TextureView textureViewGray;
     private ImageView imageViewGray;
     private TextView textViewBright;
-    private TextView textViewShinning;
+    private TextView textViewMeasureValue;
     private EditText editTextBright;
     private EditText editTextCountPX;
-    private Button btnCapture;
+    private Button StartButton;
+    private Button ClearButton;
 
+    private TextView morseValueView;
+    private TextView morseSymbol;
+    private TextView morseText;
+    private CheckBox checkMore;
+
+
+    //Camera
     private CameraDevice cameraDevice;
     private Size cameraDimension;
     private CameraCaptureSession cameraCaptureSessions;
@@ -70,6 +80,10 @@ public class camera extends AppCompatActivity {
 
     private int setBrightVal = 0;
     private int setCountPXVal = 0;
+    private int maxIndex;
+
+    StringBuilder morseValue = new StringBuilder();
+    StringBuilder AllRereceiveData = new StringBuilder();
 
 
     @Override
@@ -81,14 +95,7 @@ public class camera extends AppCompatActivity {
         textureView = (TextureView) findViewById(R.id.textureViewImage);
         textureView.setSurfaceTextureListener(textureListener); //textureListener se vytváří mimo funkci onCreate
 
-
-
         imageViewGray = (ImageView) findViewById(R.id.imageViewGray);
-
-        textViewBright = (TextView) findViewById(R.id.textViewBright);
-
-        textViewShinning = (TextView) findViewById(R.id.textViewShinning);
-
 
         editTextBright = (EditText) findViewById(R.id.editTextBright);
         editTextBright.addTextChangedListener(new TextWatcher() {
@@ -127,21 +134,29 @@ public class camera extends AppCompatActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {}
         });
 
-        btnCapture = findViewById(R.id.btnCapture);
-        btnCapture.setOnClickListener(new View.OnClickListener() {
+        ClearButton = findViewById(R.id.ClearButton);
+        ClearButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                pictureBitmap = textureView.getBitmap();
-                //BitmapTransfer.Bitmap = pictureBitmap;
-                byte[] array = BitmapOperations.getArrayFromBitmap(pictureBitmap);
-                BitmapOperations.toGrayscale(array);
-                pictureBitmapGray =BitmapOperations.getBitmapFromArray(array,textureView.getWidth() ,textureView.getHeight() );
-                imageViewGray.setImageBitmap(BitmapOperations.getBitmapFromArray(array,textureView.getWidth() ,textureView.getHeight()));
+                ClearData();
 
             }
         });
 
+
+        morseSymbol = this.findViewById(R.id.morseSymbol);
+        morseText = this.findViewById(R.id.morseText);
+        morseValueView = this.findViewById(R.id.morseValueView);
+        morseValueView.setMovementMethod(new ScrollingMovementMethod());
+
+        textViewMeasureValue = this.findViewById(R.id.textViewMeasureValue);
+
+        checkMore = findViewById(R.id.checkMore);
+        //checkMore.setOnCheckedChangeListener(new camera.moreCheckedListener());
+        //moreLayout = this.findViewById(R.id.moreLayout);
+
+        Morse.initMorse();
+        ClearData();
 
 
     }
@@ -197,9 +212,55 @@ public class camera extends AppCompatActivity {
             imageViewGray.setImageBitmap(BitmapOperations.getBitmapFromArray(array,textureView.getWidth() ,textureView.getHeight()));
             shinning = BitmapOperations.getCountOfWhiteFromBitmap(pictureBitmap, setBrightVal, setCountPXVal);
 
-            textViewShinning.setText("" + shinning);
+            int valueMorse = shinning;
+            morseValue.append(valueMorse);
+            AllRereceiveData.append(valueMorse);
+
+            if ((morseValue.length() > 1) && valueMorse == 0) {
+                Morse.SolveSymbol(morseValue.toString(), morseValue.length());
+
+                morseValue.delete(0, morseValue.length());
+                AllRereceiveData.append(",");
+            }
+
+            onProgressUpdate();
+
+            textViewMeasureValue.setText("" + shinning);
         }
     };
+
+    private void ClearData() {
+        morseValue.delete(0, morseValue.length());
+        AllRereceiveData.delete(0, AllRereceiveData.length());
+        morseValueView.setText("");
+        textViewMeasureValue.setText("");
+
+        Morse.clearMorseChar();
+        morseSymbol.setText("");
+
+        Morse.clearSolving();
+        morseText.setText("");
+
+        //setUpSndInTime();
+        //counterToRefresh = 0;
+    }
+
+    protected void onProgressUpdate() {
+        try {
+            int value = maxIndex;
+
+            //this.drawSndInTime();
+
+            // Tisk textu
+            morseValueView.setText(AllRereceiveData.toString());
+            morseSymbol.setText(Morse.getMorseChar());
+            morseText.setText(Morse.getSolving());
+
+        } catch (Throwable e) {
+            e.printStackTrace();
+            Log.e("Graph", "Selhalo vykresleni");
+        }
+    }
 
     // Vytvoření tvz. call-backu(zpětné odezvy) pro práci s kamera2 api
     CameraDevice.StateCallback stateCallback = new CameraDevice.StateCallback() {

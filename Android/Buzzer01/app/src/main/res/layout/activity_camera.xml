@@ -42,7 +42,7 @@
             android:layout_height="8dp" />
 
         <TextView
-            android:id="@+id/measureValue"
+            android:id="@+id/textViewMeasureValue"
             style="@style/StylePadding"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -52,6 +52,14 @@
         <Space
             android:layout_width="match_parent"
             android:layout_height="8dp" />
+
+        <TextView
+            android:id="@+id/morseText"
+            style="@style/StylePadding"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:background="@color/colorPrimaryI"
+            android:hint="Vyluštěno" />
 
         <TextView
             android:id="@+id/morseValueView"
@@ -87,7 +95,7 @@
     <LinearLayout
         android:id="@+id/lyt_color"
         android:layout_width="match_parent"
-        android:layout_height="180dp"
+        android:layout_height="100dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -98,14 +106,15 @@
 
         <LinearLayout
             android:id="@+id/lyt_userSet"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal" />
+            android:orientation="horizontal">
 
             <EditText
                 android:id="@+id/editTextBright"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:ems="10"
                 android:inputType="number" />
 
@@ -113,20 +122,46 @@
                 android:id="@+id/editTextCountPX"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:ems="10"
                 android:inputType="number" />
+
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/textViewShinning"
+        <Space
             android:layout_width="match_parent"
-            android:layout_height="43dp"
-            android:text="TextView" />
+            android:layout_height="8dp" />
 
-        <TextView
-            android:id="@+id/textViewBright"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="TextView" />
+            android:orientation="horizontal">
 
+            <Button
+                android:id="@+id/StartButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Start"
+                android:textColor="@color/colorPrimary" />
+
+            <Button
+                android:id="@+id/ClearButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Clear"
+                android:textColor="@color/colorPrimary"/>
+
+            <CheckBox
+                android:id="@+id/checkMore"
+                android:layout_width="35dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:checked="true"
+                android:text="More" />
+
+
+        </LinearLayout>
     </LinearLayout>
+</LinearLayout>
