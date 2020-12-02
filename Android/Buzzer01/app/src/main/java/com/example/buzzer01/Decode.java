@@ -81,7 +81,6 @@ public class Decode extends AppCompatActivity {
     private int counterToRefresh = 0;
     private double micMax = 0;
 
-    private int seekBarValue = 0;
 
 
     @Override
@@ -273,13 +272,12 @@ public class Decode extends AppCompatActivity {
     /******************************************************************/
     private class RecordAudioTask extends AsyncTask<Void, Void, Void> {
         private int maxIndex;
-        private int onPushCounter;
 
         @Override
         protected Void doInBackground(Void... voids) {
             try {
                 audioRecord.startRecording();
-                onPushCounter = 5 + seekBarValue;
+
                 while (run) {
                     // Získání vzorků
                     int bufferReadResult = audioRecord.read(buffer, 0, sampleCount, AudioRecord.READ_BLOCKING);
