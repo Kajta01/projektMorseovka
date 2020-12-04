@@ -48,6 +48,7 @@ public class Morse {
     }
 
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public static void SolveSymbol(String morseValue, int size ){
         try {
             int value = Integer.parseInt(morseValue);
@@ -82,7 +83,7 @@ public class Morse {
     public static void SolveChar(String morseValue, int size ){
 
         if(morseValue.equals("//")) {
-            if(pause == 1){
+            if(pause >= 1){                             //bylo tu "==" místo ">="
                 Solving.append(" ");
             }
             pause ++;
@@ -100,6 +101,7 @@ public class Morse {
         }
         pause = 0;
     }
+
 
     public static String getMorseChar(){
         return MorseChar.toString();

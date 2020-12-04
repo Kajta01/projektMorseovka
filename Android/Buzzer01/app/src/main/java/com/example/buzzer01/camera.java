@@ -98,6 +98,8 @@ public class camera extends AppCompatActivity {
         imageViewGray = (ImageView) findViewById(R.id.imageViewGray);
 
         editTextBright = (EditText) findViewById(R.id.editTextBright);
+        editTextBright.setText("250");
+        setBrightVal = 250;
         editTextBright.addTextChangedListener(new TextWatcher() {
 
             public void afterTextChanged(Editable s) {
@@ -117,6 +119,8 @@ public class camera extends AppCompatActivity {
         });
 
         editTextCountPX = (EditText) findViewById(R.id.editTextCountPX);
+        editTextCountPX.setText("2500");
+        setCountPXVal = 2500;
         editTextCountPX.addTextChangedListener(new TextWatcher() {
 
             public void afterTextChanged(Editable s) {
