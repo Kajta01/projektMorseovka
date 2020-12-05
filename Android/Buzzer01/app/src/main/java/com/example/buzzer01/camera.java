@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.PixelFormat;
+import android.graphics.PorterDuff;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
@@ -17,6 +18,7 @@ import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.ImageReader;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -33,13 +35,16 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
@@ -50,14 +55,17 @@ public class camera extends AppCompatActivity {
     private static final int REQUEST_CAMERA_PERMISSION = 200;
 
     public int shinning = 0;
+    private int run = 0;
 
     // User interface
     private TextureView textureView;
     private ImageView imageViewGray;
-    private TextView textViewBright;
     private TextView textViewMeasureValue;
+    private TextView editTextCountText;
+    private TextView editTextBrightText;
     private EditText editTextBright;
     private EditText editTextCountPX;
+
     private Button StartButton;
     private Button ClearButton;
 
@@ -65,6 +73,8 @@ public class camera extends AppCompatActivity {
     private TextView morseSymbol;
     private TextView morseText;
     private CheckBox checkMore;
+
+    private LinearLayout moreLayout;
 
 
     //Camera
@@ -96,6 +106,12 @@ public class camera extends AppCompatActivity {
         textureView.setSurfaceTextureListener(textureListener); //textureListener se vytváří mimo funkci onCreate
 
         imageViewGray = (ImageView) findViewById(R.id.imageViewGray);
+
+        editTextBrightText = (TextView) findViewById(R.id.editTextBrightText);
+        editTextBrightText.setText("bright level:");
+
+        editTextCountText = (TextView) findViewById(R.id.editTextCountText);
+        editTextCountText.setText("pixels:");
 
         editTextBright = (EditText) findViewById(R.id.editTextBright);
         editTextBright.setText("250");
@@ -147,6 +163,24 @@ public class camera extends AppCompatActivity {
             }
         });
 
+        StartButton = this.findViewById(R.id.StartButton);
+        StartButton.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.M)
+            @Override
+            public void onClick(View v) {
+                if (run == 1) {
+                    run = 0;
+                    StartButton.setText("Start");
+                    StartButton.getBackground().clearColorFilter();
+
+                } else {
+                    run = 1;
+                    StartButton.setText("Stop");
+                    StartButton.getBackground().setColorFilter(getColor(R.color.darkGreen), PorterDuff.Mode.MULTIPLY);
+                }
+            }
+        });
+
 
         morseSymbol = this.findViewById(R.id.morseSymbol);
         morseText = this.findViewById(R.id.morseText);
@@ -156,13 +190,37 @@ public class camera extends AppCompatActivity {
         textViewMeasureValue = this.findViewById(R.id.textViewMeasureValue);
 
         checkMore = findViewById(R.id.checkMore);
-        //checkMore.setOnCheckedChangeListener(new camera.moreCheckedListener());
-        //moreLayout = this.findViewById(R.id.moreLayout);
+        checkMore.setOnCheckedChangeListener(new camera.moreCheckedListener());
+        moreLayout = this.findViewById(R.id.moreLayout);
 
         Morse.initMorse();
         ClearData();
 
 
+    }
+
+    /********************Skrytí/zobrazení dalších možností **********************************************/
+
+    private class moreCheckedListener implements CompoundButton.OnCheckedChangeListener {
+
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            if (isChecked) {
+                moreLayout.setVisibility(View.VISIBLE);
+                // LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) moreLayout.getLayoutParams();
+                // params.height = LinearLayout.LayoutParams.WRAP_CONTENT;
+                // moreLayout.setLayoutParams(params);
+
+
+            } else {
+                moreLayout.setVisibility(View.INVISIBLE);
+
+                // LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) moreLayout.getLayoutParams();
+                // params.height = 0;
+                // moreLayout.setLayoutParams(params);
+
+            }
+        }
     }
 
 
@@ -214,6 +272,9 @@ public class camera extends AppCompatActivity {
             BitmapOperations.toGrayscale(array);
             pictureBitmapGray =BitmapOperations.getBitmapFromArray(array,textureView.getWidth() ,textureView.getHeight() );
             imageViewGray.setImageBitmap(BitmapOperations.getBitmapFromArray(array,textureView.getWidth() ,textureView.getHeight()));
+
+            if(run == 1){
+
             shinning = BitmapOperations.getCountOfWhiteFromBitmap(pictureBitmap, setBrightVal, setCountPXVal);
 
             int valueMorse = shinning;
@@ -226,10 +287,9 @@ public class camera extends AppCompatActivity {
                 morseValue.delete(0, morseValue.length());
                 AllRereceiveData.append(",");
             }
-
             onProgressUpdate();
-
             textViewMeasureValue.setText("" + shinning);
+            }
         }
     };
 
@@ -248,6 +308,8 @@ public class camera extends AppCompatActivity {
         //setUpSndInTime();
         //counterToRefresh = 0;
     }
+
+
 
     protected void onProgressUpdate() {
         try {

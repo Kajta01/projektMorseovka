@@ -25,10 +25,34 @@
 
         <ImageView
             android:id="@+id/imageViewGray"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             app:srcCompat="@mipmap/ic_launcher" />
     </LinearLayout>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="8dp" />
+
+    <TextView
+        android:id="@+id/textViewMeasureValue"
+        style="@style/StylePadding"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimaryI"
+        android:text="Naměřená hodnota" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="8dp" />
+
+    <TextView
+        android:id="@+id/morseText"
+        style="@style/StylePadding"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:background="@color/colorPrimaryI"
+        android:hint="Vyluštěno" />
 
     <LinearLayout
         android:id="@+id/moreLayout"
@@ -41,25 +65,7 @@
             android:layout_width="match_parent"
             android:layout_height="8dp" />
 
-        <TextView
-            android:id="@+id/textViewMeasureValue"
-            style="@style/StylePadding"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/colorPrimaryI"
-            android:text="Naměřená hodnota" />
 
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="8dp" />
-
-        <TextView
-            android:id="@+id/morseText"
-            style="@style/StylePadding"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:background="@color/colorPrimaryI"
-            android:hint="Vyluštěno" />
 
         <TextView
             android:id="@+id/morseValueView"
@@ -110,21 +116,45 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
+            <Space
+                android:layout_width="8dp"
+                android:layout_height="match_parent" />
+
+            <TextView
+                android:id="@+id/editTextBrightText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ems="10"
+                android:inputType="none"
+                android:text="Name" />
+
             <EditText
                 android:id="@+id/editTextBright"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:ems="10"
+                android:ems="9"
                 android:inputType="number" />
+
+            <TextView
+                android:id="@+id/editTextCountText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ems="10"
+                android:inputType="none"
+                android:text="Name" />
 
             <EditText
                 android:id="@+id/editTextCountPX"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:ems="10"
+                android:ems="9"
                 android:inputType="number" />
+
+
 
         </LinearLayout>
 
