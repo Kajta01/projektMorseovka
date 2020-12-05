@@ -41,7 +41,7 @@ import java.lang.Math;
 
 import com.google.android.material.chip.Chip;
 
-public class Decode extends AppCompatActivity {
+public class DecodeBuzzer extends AppCompatActivity {
     static float SOUND_LIMIT = 0.02f;
     static int BOOST = 10;
     static int FREQUENCY = 12000;
@@ -50,7 +50,7 @@ public class Decode extends AppCompatActivity {
 
 
     private AudioRecord audioRecord;
-    private Decode.RecordAudioTask recordTask;
+    private DecodeBuzzer.RecordAudioTask recordTask;
     private float[] buffer;
     private int sampleCount = 128 * 8; //512
     private final int REQUEST_PERMISSION = 200;
@@ -196,7 +196,7 @@ public class Decode extends AppCompatActivity {
         startStopButton.setText("Stop");
 
         startStopButton.getBackground().setColorFilter(getColor(R.color.darkGreen), PorterDuff.Mode.MULTIPLY);
-        recordTask = new Decode.RecordAudioTask();
+        recordTask = new DecodeBuzzer.RecordAudioTask();
         recordTask.execute();
 
     }

@@ -26,7 +26,7 @@ public class Welcome extends AppCompatActivity {
         buttonDecodeBuzzer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Welcome.this, Decode.class);
+                Intent intent = new Intent(Welcome.this, DecodeBuzzer.class);
                 startActivityForResult(intent,1);
             }
         });
@@ -34,7 +34,7 @@ public class Welcome extends AppCompatActivity {
         buttonDecodeCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Welcome.this, camera.class);
+                Intent intent = new Intent(Welcome.this, DecodeCamera.class);
                 startActivityForResult(intent,1);
             }
         });

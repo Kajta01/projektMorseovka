@@ -50,7 +50,7 @@ import androidx.core.app.ActivityCompat;
 
 import java.util.Arrays;
 
-public class camera extends AppCompatActivity {
+public class DecodeCamera extends AppCompatActivity {
 
     private static final int REQUEST_CAMERA_PERMISSION = 200;
 
@@ -190,7 +190,7 @@ public class camera extends AppCompatActivity {
         textViewMeasureValue = this.findViewById(R.id.textViewMeasureValue);
 
         checkMore = findViewById(R.id.checkMore);
-        checkMore.setOnCheckedChangeListener(new camera.moreCheckedListener());
+        checkMore.setOnCheckedChangeListener(new DecodeCamera.moreCheckedListener());
         moreLayout = this.findViewById(R.id.moreLayout);
 
         Morse.initMorse();
@@ -423,7 +423,7 @@ public class camera extends AppCompatActivity {
 
                 @Override
                 public void onConfigureFailed(@NonNull CameraCaptureSession cameraCaptureSession) {
-                    Toast.makeText(camera.this, "Changed", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(DecodeCamera.this, "Changed", Toast.LENGTH_SHORT).show();
                 }
             }, null);
         } catch (CameraAccessException e) {
