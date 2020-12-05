@@ -15,13 +15,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
 
-        <activity android:name=".Decode">
+        <activity android:name=".DecodeBuzzer">
 
         </activity>
         <activity android:name=".SocketSend" >
 
         </activity>
-        <activity android:name=".camera" >
+        <activity android:name=".DecodeCamera" >
 
         </activity>
 
