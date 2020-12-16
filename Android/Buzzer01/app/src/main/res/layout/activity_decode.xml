@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="horizontal"
 
-    tools:context=".Decode"
+    tools:context=".DecodeBuzzer"
     android:background="@color/backgroundColor">
 
 
